@@ -59,6 +59,9 @@ int main (int argc, char **argv) {
             		case SDLK_ESCAPE:
             			continuer = 0;
             			break;
+            		case 257: /* SDLK_1, le symbole ne marche pas... */
+            			continuer = printRegles(ecran);
+            			break;
             		default:
             			break;
             	}
@@ -79,7 +82,6 @@ int main (int argc, char **argv) {
             		SDL_BlitSurface(option2a, NULL, ecran, &pos2);
             		SDL_BlitSurface(option3a, NULL, ecran, &pos3);
             	}
-            	
             	break;
             	
             case SDL_MOUSEBUTTONUP:
@@ -88,17 +90,20 @@ int main (int argc, char **argv) {
             	
             	if (x_m > pos1.x && x_m < pos1.x+option1a->w && y_m > pos1.y && y_m < pos1.y+option1a->h) {
             		continuer = printRegles(ecran);
-            		if (continuer > 0) {
-            			SDL_BlitSurface(fond, NULL, ecran, &posFond);
-						SDL_BlitSurface(option1a, NULL, ecran, &pos1);
-						SDL_BlitSurface(option2a, NULL, ecran, &pos2);
-						SDL_BlitSurface(option3a, NULL, ecran, &pos3);
-					}
             	}
             
             default:
             	break;
         }
+        
+        if (continuer == 2) {
+        	continuer = 1;
+        	SDL_BlitSurface(fond, NULL, ecran, &posFond);
+			SDL_BlitSurface(option1a, NULL, ecran, &pos1);
+			SDL_BlitSurface(option2a, NULL, ecran, &pos2);
+			SDL_BlitSurface(option3a, NULL, ecran, &pos3);
+		}
+		
         SDL_Flip(ecran);
     }
     
