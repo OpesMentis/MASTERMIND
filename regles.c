@@ -88,27 +88,50 @@ int printRegles(SDL_Surface *ecran) {
             		continuer = 2;
             	}
             	
-            	if (chgt > 0) {
-            		chgt = 0;
-		        	SDL_BlitSurface(regles[i-1], NULL, ecran, &pos);
-		        	SDL_BlitSurface(jouer, NULL, ecran, &pos_j);
-		        	SDL_BlitSurface(menu, NULL, ecran, &pos_m);
-		        	if (i == 1) {
-		        		SDL_BlitSurface(droite, NULL, ecran, &pos_d);
-		        		SDL_BlitSurface(none, NULL, ecran, &pos_g);
-		        	} else if (i == 2) {
-		        		SDL_BlitSurface(gauche, NULL, ecran, &pos_g);
-		        		SDL_BlitSurface(droite, NULL, ecran, &pos_d);
-		        	} else if (i == 3) {
-		        		SDL_BlitSurface(gauche, NULL, ecran, &pos_g);
-		        		SDL_BlitSurface(none, NULL, ecran, &pos_d);
-		        	}
-		        }
 		        break;
+            
+            case SDL_KEYDOWN:
+            	switch (event.key.keysym.sym) {
+            		case SDLK_m:
+            			continuer = 2;
+            			break;
+            		case SDLK_RIGHT:
+            			if (i == 1 || i == 2) {
+            				i++;
+            				chgt = 1;
+            			}
+            			break;
+            		case SDLK_LEFT:
+            			if (i == 2 || i == 3) {
+            				i--;
+            				chgt = 1;
+            			}
+            			break;
+            		default:
+            			break;
+            	}
+            	break;
             
             default:
             	break;
         }
+        if (chgt > 0) {
+        	chgt = 0;
+		   	SDL_BlitSurface(regles[i-1], NULL, ecran, &pos);
+		  	SDL_BlitSurface(jouer, NULL, ecran, &pos_j);
+		  	SDL_BlitSurface(menu, NULL, ecran, &pos_m);
+		  	if (i == 1) {
+		   		SDL_BlitSurface(droite, NULL, ecran, &pos_d);
+		   		SDL_BlitSurface(none, NULL, ecran, &pos_g);
+		   	} else if (i == 2) {
+		   		SDL_BlitSurface(gauche, NULL, ecran, &pos_g);
+		   		SDL_BlitSurface(droite, NULL, ecran, &pos_d);
+		   	} else if (i == 3) {
+		   		SDL_BlitSurface(gauche, NULL, ecran, &pos_g);
+		   		SDL_BlitSurface(none, NULL, ecran, &pos_d);
+		  	}
+		}
+		
         SDL_Flip(ecran);
     }
     
