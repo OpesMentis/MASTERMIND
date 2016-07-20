@@ -1,13 +1,16 @@
 all: Mastermind
 
-Mastermind: regles.o main.o
-	gcc -O3 -o Mastermind regles.o main.o -lSDL -lSDL_image
+Mastermind: regles.o jeu.o main.o
+	gcc -O3 -o Mastermind regles.o jeu.o main.o -lSDL -lSDL_image
 	
 main.o: main.c
 	gcc -O3 -Wall -Wfatal-errors -o main.o -c main.c
 	
-regles.o: regles.c
+regles.o: regles.c regles.h
 	gcc -O3 -Wall -Wfatal-errors -o regles.o -c regles.c
+	
+jeu.o: jeu.c jeu.h
+	gcc -O3 -Wall -Wfatal-errors -o jeu.o -c jeu.c
 	
 run: Mastermind
 	./Mastermind
