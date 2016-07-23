@@ -20,6 +20,9 @@ int printJeu(SDL_Surface *ecran) {
 	SDL_Surface *bleu = IMG_Load("img/bleu.png");
 	SDL_Surface *blanc = IMG_Load("img/blanc.png");
 	
+	SDL_Surface *vide = IMG_Load("img/vide.png");
+	SDL_SetColorKey(vide, SDL_SRCCOLORKEY, SDL_MapRGB(vide->format, 68, 116, 213));
+	
 	SDL_Surface *pions[8] = { vert, violet, rouge, orange,
 							  noir, jaune, bleu, blanc };
 	SDL_Rect posp[8];
@@ -38,8 +41,7 @@ int printJeu(SDL_Surface *ecran) {
 	SDL_Flip(ecran);
 	
 	int continuer = 1;
-	int fol = 0;
-	int idx = 0;
+	int idx = -1;
 	int x_m, y_m;
 	SDL_Event event;
 	
@@ -53,15 +55,21 @@ int printJeu(SDL_Surface *ecran) {
             case SDL_MOUSEBUTTONDOWN:
 		        x_m = event.button.x;
 		       	y_m = event.button.y;
-		       	if (fol == 1) {
-		       		fol = 2;
-            	} else {
-            		for (i = 0; i < 8; i++) {
-            			if (x_m > posp[i].x && x_m < posp[i].x+pions[i]->w && y_m > posp[i].y && y_m < posp[i].y+pions[i]->h) {
-            				fol = 1;
-            				idx = i;
-            				break;
+		       	
+		       	for (i = 0; i < 8; i++) {
+            		if (x_m > posp[i].x && x_m < posp[i].x+pions[i]->w && y_m > posp[i].y && y_m < posp[i].y+pions[i]->h) {
+            			if (idx > -1) {
+            				SDL_SetColorKey(pions[idx], SDL_SRCCOLORKEY, SDL_MapRGB(pions[idx]->format, 68, 116, 212));
+            				SDL_BlitSurface(pions[idx], NULL, ecran, &posp[idx]);
+            				SDL_SetColorKey(pions[idx], SDL_SRCCOLORKEY, SDL_MapRGB(pions[idx]->format, 68, 116, 213));
             			}
+            			if (i != idx) {
+		        			SDL_BlitSurface(vide, NULL, ecran, &posp[i]);
+		        			idx = i;
+		        		} else {
+		        			 idx = -1;
+		        		}
+           				break;
             		}
             	}
             	break;
@@ -70,16 +78,6 @@ int printJeu(SDL_Surface *ecran) {
            		break;
        	}
        	
-       	if (fol == 1) {
-       		posp[idx].x = event.motion.x - 15;
-       		posp[idx].y = event.button.y - 15;
-       		SDL_BlitSurface(jeu, NULL, ecran, &pos);
-       		SDL_BlitSurface(pions[idx], NULL, ecran, &posp[idx]);
-       	} else if (fol == 2) {
-       		posp[idx].x = 70; posp[idx].y = 46 + 45*i;
-       		fol = 0;
-       		SDL_BlitSurface(jeu, NULL, ecran, &pos);
-       	}
        	SDL_Flip(ecran);
     }
 	
