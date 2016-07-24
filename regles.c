@@ -85,8 +85,10 @@ int printRegles(SDL_Surface *ecran) {
             	} else if ((i == 2 || i == 3) && is_over(x_m, y_m, *gauche, pos_g)) {
             		i--;
             		chgt = 1;
-            	} else if (x_m > pos_m.x && is_over(x_m, y_m, *menu, pos_m)) {
+            	} else if (is_over(x_m, y_m, *menu, pos_m)) {
             		continuer = 2;
+            	} else if (is_over(x_m, y_m, *jouer, pos_j)) {
+            		continuer = printJeu(ecran);
             	}
             	
 		        break;
