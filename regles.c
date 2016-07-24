@@ -7,6 +7,7 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include "regles.h"
+#include "jeu.h"
 
 int printRegles(SDL_Surface *ecran) {
 	SDL_Surface *regles1 = IMG_Load("img/regles1.png");
@@ -53,9 +54,9 @@ int printRegles(SDL_Surface *ecran) {
             	x_m = event.motion.x;
             	y_m = event.motion.y;
             	
-            	if ((i == 1 || i == 2) && x_m > pos_d.x && x_m < pos_d.x+droite->w && y_m > pos_d.y && y_m < pos_d.y+droite->h) {
+            	if ((i == 1 || i == 2) && is_over(x_m, y_m, *droite, pos_d)) {
             		SDL_BlitSurface(droites, NULL, ecran, &pos_d);
-            	} else if ((i == 2 || i == 3) && x_m > pos_g.x && x_m < pos_g.x+gauche->w && y_m > pos_g.y && y_m < pos_d.y+gauche->h) {
+            	} else if ((i == 2 || i == 3) && is_over(x_m, y_m, *gauche, pos_g)) {
             		SDL_BlitSurface(gauches, NULL, ecran, &pos_g);
             	} else {
             		if (i == 1 || i == 2) {
@@ -65,9 +66,9 @@ int printRegles(SDL_Surface *ecran) {
             			SDL_BlitSurface(gauche, NULL, ecran, &pos_g);
             		}
             	}
-            	if (x_m > pos_j.x && x_m < pos_j.x+jouer->w && y_m > pos_j.y && y_m < pos_j.y+jouer->h) {
+            	if (is_over(x_m, y_m, *jouer, pos_j)) {
             		SDL_BlitSurface(jouers, NULL, ecran, &pos_j);
-            	} else if (x_m > pos_m.x && x_m < pos_m.x+menu->w && y_m > pos_m.y && y_m < pos_m.y+menu->h) {
+            	} else if (is_over(x_m, y_m, *menu, pos_m)) {
             		SDL_BlitSurface(menus, NULL, ecran, &pos_m);
             	} else {
             		SDL_BlitSurface(jouer, NULL, ecran, &pos_j);
@@ -78,13 +79,13 @@ int printRegles(SDL_Surface *ecran) {
             	x_m = event.button.x;
             	y_m = event.button.y;
             	
-            	if ((i == 1 || i == 2) && x_m > pos_d.x && x_m < pos_d.x+droite->w && y_m > pos_d.y && y_m < pos_d.y+droite->h) {
+            	if ((i == 1 || i == 2) && is_over(x_m, y_m, *droite, pos_d)) {
             		i++;
             		chgt = 1;
-            	} else if ((i == 2 || i == 3) && x_m > pos_g.x && x_m < pos_g.x+gauche->w && y_m > pos_g.y && y_m < pos_d.y+gauche->h) {
+            	} else if ((i == 2 || i == 3) && is_over(x_m, y_m, *gauche, pos_g)) {
             		i--;
             		chgt = 1;
-            	} else if (x_m > pos_m.x && x_m < pos_m.x+menu->w && y_m > pos_m.y && y_m < pos_m.y+menu->h) {
+            	} else if (x_m > pos_m.x && is_over(x_m, y_m, *menu, pos_m)) {
             		continuer = 2;
             	}
             	
@@ -94,6 +95,9 @@ int printRegles(SDL_Surface *ecran) {
             	switch (event.key.keysym.sym) {
             		case SDLK_m:
             			continuer = 2;
+            			break;
+            		case SDLK_j:
+            			continuer = printJeu(ecran);;
             			break;
             		case SDLK_RIGHT:
             			if (i == 1 || i == 2) {

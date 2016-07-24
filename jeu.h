@@ -2,5 +2,8 @@
 #define JEU_H
 
 int printJeu(SDL_Surface *ecran);
+void chx_code(int code[4]);
+void init_pos_sec (SDL_Rect pos[4], int n);
+int is_over(int x, int y, SDL_Surface s, SDL_Rect p);
 
 #endif

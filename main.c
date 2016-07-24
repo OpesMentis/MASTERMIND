@@ -17,6 +17,14 @@
 #include "regles.h"
 #include "jeu.h"
 
+/*
+int is_over(int x, int y, SDL_Surface s, SDL_Rect p) {
+	if (x > p.x && x < p.x+(&s)->w && y > p.y && y < p.y+(&s)->h) {
+		return 1;
+	}
+	return 0;
+}*/
+
 int main (int argc, char **argv) {	
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -74,11 +82,11 @@ int main (int argc, char **argv) {
             	x_m = event.motion.x;
             	y_m = event.motion.y;
             	
-            	if (x_m > pos1.x && x_m < pos1.x+option1a->w && y_m > pos1.y && y_m < pos1.y+option1a->h) {
+            	if (is_over(x_m, y_m, *option1a, pos1)) {
             		SDL_BlitSurface(option1b, NULL, ecran, &pos1);
-            	} else if (x_m > pos2.x && x_m < pos2.x+option2a->w && y_m > pos2.y && y_m < pos2.y+option2a->h) {
+            	} else if (is_over(x_m, y_m, *option2a, pos2)) {
             		SDL_BlitSurface(option2b, NULL, ecran, &pos2);
-            	} else if (x_m > pos3.x && x_m < pos3.x+option3a->w && y_m > pos3.y && y_m < pos3.y+option3a->h) {
+            	} else if (is_over(x_m, y_m, *option3a, pos3)) {
             		SDL_BlitSurface(option3b, NULL, ecran, &pos3);
             	} else {
             		SDL_BlitSurface(option1a, NULL, ecran, &pos1);
@@ -91,11 +99,11 @@ int main (int argc, char **argv) {
             	x_m = event.button.x;
             	y_m = event.button.y;
             	
-            	if (x_m > pos1.x && x_m < pos1.x+option1a->w && y_m > pos1.y && y_m < pos1.y+option1a->h) {
+            	if (is_over(x_m, y_m, *option1a, pos1)) {
             		continuer = printRegles(ecran);
             	}
             	
-            	if (x_m > pos2.x && x_m < pos2.x+option2a->w && y_m > pos2.y && y_m < pos2.y+option2a->h) {
+            	if (is_over(x_m, y_m, *option2a, pos2)) {
             		continuer = printJeu(ecran);
             	}
             
