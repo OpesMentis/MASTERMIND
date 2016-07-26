@@ -88,7 +88,7 @@ int printRegles(SDL_Surface *ecran) {
             	} else if (is_over(x_m, y_m, *menu, pos_m)) {
             		continuer = 2;
             	} else if (is_over(x_m, y_m, *jouer, pos_j)) {
-            		continuer = printJeu(ecran);
+            		continuer = 3;
             	}
             	
 		        break;
@@ -99,7 +99,7 @@ int printRegles(SDL_Surface *ecran) {
             			continuer = 2;
             			break;
             		case SDLK_j:
-            			continuer = printJeu(ecran);;
+            			continuer = 3;
             			break;
             		case SDLK_RIGHT:
             			if (i == 1 || i == 2) {

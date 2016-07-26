@@ -8,6 +8,37 @@
 #include <SDL/SDL_image.h>
 #include <time.h>
 #include "jeu.h"
+#include "regles.h"
+
+int * eval_code(int code[4], int prop[4]) {
+	int * res = malloc(2);
+	res[0] = 0; res[1] = 0;
+	int st_prop[4] = {0, 0, 0, 0};
+	int st_code[4] = {0, 0, 0, 0};
+	int i, j;
+	
+	for (i = 0; i < 4; i++) {
+		if (prop[i] == code[i]) {
+			res[0]++;
+			st_prop[i] = 1;
+			st_code[i] = 1;
+		}
+	}
+	for (i = 0; i < 4; i++) {
+		if (!st_prop[i]) {
+			for (j = 0; j < 4; j++) {
+				if (!st_code[j] && prop[i] == code[j]) {
+					res[1]++;
+					st_code[j] = 1;
+					st_prop[i] = 1;
+					break;
+				}
+			}
+		}
+	}
+	
+	return res;
+}
 
 int all_fill(int code[4]) {
 	if (code[0] == -1 || code[1] == -1 || code[2] == -1 || code[3] == -1) {
@@ -21,6 +52,14 @@ void chx_code(int code[4]) {
 	int i;
 	for (i = 0; i < 4; i++) {
 		code[i] = rand() % 8;
+	}
+}
+
+void init_pos_res (SDL_Rect pos[4], int n) {
+	int i;
+	for (i = 0; i < 4; i++) {
+		pos[i].x = 450 + 40 * i;
+		pos[i].y = 390 - 35 * n;
 	}
 }
 
@@ -62,11 +101,23 @@ int printJeu(SDL_Surface *ecran) {
 	SDL_Surface *bleu = IMG_Load("img/bleu.png");
 	SDL_Surface *blanc = IMG_Load("img/blanc.png");
 	
+	SDL_Surface *p_rouge = IMG_Load("img/p_rouge.png");
+	SDL_Surface *p_blanc = IMG_Load("img/p_blanc.png");
+	SDL_Surface *rien = IMG_Load("img/rien.png");
+	
 	SDL_Surface *vide = IMG_Load("img/vide.png");
 	SDL_Surface *none = IMG_Load("img/none2.png");
 	SDL_Surface *secret = IMG_Load("img/secret.png");
+	SDL_Surface *mask = IMG_Load("img/code.png");
 	SDL_Surface *annul = IMG_Load("img/annul.png");
 	SDL_Surface *valid = IMG_Load("img/valid.png");
+	
+	SDL_Surface *jouer = IMG_Load("img/partie.png");
+	SDL_Surface *jouers = IMG_Load("img/parties.png");
+	SDL_Surface *menu = IMG_Load("img/menu2.png");
+	SDL_Surface *menus = IMG_Load("img/menu2s.png");
+	SDL_Surface *regle = IMG_Load("img/regle.png");
+	SDL_Surface *regles = IMG_Load("img/regles.png");
 	
 	SDL_SetColorKey(vide, SDL_SRCCOLORKEY, SDL_MapRGB(vide->format, 68, 116, 213));
 	
@@ -75,21 +126,37 @@ int printJeu(SDL_Surface *ecran) {
 	SDL_Rect posp[8]; // position des pions
 	SDL_Rect pos = {0, 0}; // position de l'écran de jeu
 	SDL_Rect pos_sec = {220, 12}; // position de 'secret'
+	SDL_Rect pos_reg = {40, 440}; // position du bouton 'Règles'
+	SDL_Rect pos_jou = {240, 440}; // position du bouton 'Nouvelle partie'
+	SDL_Rect pos_men = {440, 440}; // position du bouton 'Menu'
 	SDL_Rect pos_chx[4]; // position des réceptacles des pions
-	SDL_Rect pos_opt[2] = {{450, 378}, {490, 378}};
+	SDL_Rect pos_opt[2]; // position des boutons
+	SDL_Rect pos_res[4]; // position des pastilles d'évaluation
 	
 	SDL_BlitSurface(jeu, NULL, ecran, &pos);
-	SDL_BlitSurface(annul, NULL, ecran, &pos_opt[0]);
 	
-	int i;
+	int i, j;
 	for (i = 0; i < 8; i++) {
 		posp[i].x = 70;
 		posp[i].y = 46 + 45 * i;
 		
 		SDL_SetColorKey(pions[i], SDL_SRCCOLORKEY, SDL_MapRGB(pions[i]->format, 68, 116, 213));
 	}
+	for (j = 0; j < 10; j++) {
+		init_pos_chx (pos_chx, j);
+		for (i = 0; i < 4; i++) {
+			SDL_BlitSurface(vide, NULL, ecran, &pos_chx[i]);
+		}
+	}
 	
 	init_pos_chx(pos_chx, 0);
+	init_pos_opt(pos_opt, 0);
+	init_pos_res(pos_res, 0);
+	
+	SDL_BlitSurface(annul, NULL, ecran, &pos_opt[0]);
+	SDL_BlitSurface(jouer, NULL, ecran, &pos_jou);
+	SDL_BlitSurface(regle, NULL, ecran, &pos_reg);
+	SDL_BlitSurface(menu, NULL, ecran, &pos_men);
 	
 	/* Jeu à proprement parler */
 	/* Variables utiles */
@@ -100,6 +167,7 @@ int printJeu(SDL_Surface *ecran) {
 	SDL_Event event;
 	int n_essai = 0;
 	int essai[4] = {-1, -1, -1, -1};
+	int over = 0;
 	
 	/* Choix du code */
 	int code[4];
@@ -128,7 +196,7 @@ int printJeu(SDL_Surface *ecran) {
             	x_m = event.motion.x;
             	y_m = event.motion.y;
             	
-            	if (!pass) {
+            	if (!over) {
             		if (is_over(x_m, y_m, *annul, pos_opt[0])) {
             			SDL_BlitSurface(vide, NULL, ecran, &pos_opt[0]);
             		} else if (all_fill(essai) && is_over(x_m, y_m, *valid, pos_opt[1])) {
@@ -140,13 +208,42 @@ int printJeu(SDL_Surface *ecran) {
             			SDL_BlitSurface(annul, NULL, ecran, &pos_opt[0]);
             		}
             	}
+            	
+            	if (is_over(x_m, y_m, *jouer, pos_jou)) {
+            		SDL_BlitSurface(jouers, NULL, ecran, &pos_jou);
+            	} else if (is_over(x_m, y_m, *menu, pos_men)) {
+            		SDL_BlitSurface(menus, NULL, ecran, &pos_men);
+            	} else if (is_over(x_m, y_m, *regle, pos_reg)) {
+            		SDL_BlitSurface(regles, NULL, ecran, &pos_reg);
+            	} else {
+            		SDL_BlitSurface(jouer, NULL, ecran, &pos_jou);
+            		SDL_BlitSurface(menu, NULL, ecran, &pos_men);
+            		SDL_BlitSurface(regle, NULL, ecran, &pos_reg);
+            	}
+            	
             	break;
 
             case SDL_MOUSEBUTTONUP:
 		        x_m = event.button.x;
 		       	y_m = event.button.y;
 		       	
-		       	if (!pass) {
+		       	if (is_over(x_m, y_m, *jouer, pos_jou)) {
+            		continuer = 3;
+            		pass = 1;
+            	} else if (is_over(x_m, y_m, *menu, pos_men)) {
+            		continuer = 2;
+            		pass = 1;
+            	} else if (is_over(x_m, y_m, *regle, pos_reg)) {
+            		continuer = 4;
+            		pass = 1;
+            	} else {
+            		SDL_BlitSurface(jouer, NULL, ecran, &pos_jou);
+            		SDL_BlitSurface(menu, NULL, ecran, &pos_men);
+            		SDL_BlitSurface(regle, NULL, ecran, &pos_reg);
+            	}
+		       	
+		       	/* Bouton 'effacer' */
+		       	if (!pass && !over) {
 		        	if (is_over(x_m, y_m, *annul, pos_opt[0])) {
 		        		SDL_SetColorKey(vide, SDL_SRCCOLORKEY, SDL_MapRGB(vide->format, 68, 116, 212));
 		        		for (i = 0; i < 4; i++) {
@@ -158,8 +255,50 @@ int printJeu(SDL_Surface *ecran) {
 		        		pass = 1;
 		        	}
 		        }
+		        
+		        /* Bouton 'valider' */
+		        if (!pass && !over) {
+		        	if (is_over(x_m, y_m, *valid, pos_opt[1])) {
+		        		SDL_BlitSurface(none, NULL, ecran, &pos_opt[0]);
+		        		SDL_BlitSurface(none, NULL, ecran, &pos_opt[1]);
+		        		int * res = malloc(2);
+		        		res = eval_code(code, essai);
+						if (n_essai == 9 || res[0] == 4) {
+		        			SDL_BlitSurface(mask, NULL, ecran, &pos_sec);
+		        			for (i = 0; i < 4; i++) {
+								pos_chx[i].x = 230 + 50 * i;
+								pos_chx[i].y = 17;
+									
+								SDL_BlitSurface(vide, NULL, ecran, &pos_chx[i]);
+								SDL_BlitSurface(pions[code[i]], NULL, ecran, &pos_chx[i]);
+							}
+							over = 1;
+		        		} else {
+		        			if (res[0] == 0 && res[1] == 0) {
+		        				SDL_BlitSurface(rien, NULL, ecran, &pos_res[0]);
+		        			} else {
+				    			j = 0;
+				    			for (i = 0; i < res[0]; i++) {
+				    				SDL_BlitSurface(p_rouge, NULL, ecran, &pos_res[j++]);
+				    			}
+				    			for (i = 0; i < res[1]; i++) {
+				    				SDL_BlitSurface(p_blanc, NULL, ecran, &pos_res[j++]);
+				    			}
+				    		}
+		        			n_essai++;
+		        			init_pos_chx(pos_chx, n_essai);
+							init_pos_opt(pos_opt, n_essai);
+							init_pos_res(pos_res, n_essai);
+							
+							SDL_BlitSurface(annul, NULL, ecran, &pos_opt[0]);
+							for (i = 0; i < 4; i++) { essai[i] = -1; }
+		        		}
+		        		pass = 1;
+		        	}
+		        }
 		       	
-		       	if (!pass) {
+		       	/* Apposition d'une couleur */
+		       	if (!pass && !over) {
 				   	for (i = 0; i < 4; i++) {
 					   	if (is_over(x_m, y_m, *vide, pos_chx[i])) {
 					   		if (idx > -1) {
@@ -186,7 +325,8 @@ int printJeu(SDL_Surface *ecran) {
 					}
 				}
 		       	
-		       	if (!pass) {
+		       	/* Sélection d'une couleur */
+		       	if (!pass && !over) {
 				   	for (i = 0; i < 8; i++) {
 		        		if (is_over(x_m, y_m, *pions[i], posp[i])) {
 		        			if (idx > -1) {
@@ -213,7 +353,6 @@ int printJeu(SDL_Surface *ecran) {
            	default:
            		break;
        	}
-       	
        	SDL_Flip(ecran);
     }
 	
