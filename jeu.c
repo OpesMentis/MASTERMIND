@@ -182,15 +182,22 @@ int printJeu(SDL_Surface *ecran) {
            	case SDL_QUIT:
                	continuer = 0;
                	break;
-               	
+            
             case SDL_KEYDOWN:
             	switch (event.key.keysym.sym) {
             		case SDLK_m:
             			continuer = 2;
             			break;
+            		case SDLK_n:
+            			continuer = 3;
+            			break;
+            		case SDLK_r:
+            			continuer = 4;
+            			break;
             		default:
             			break;
             	}
+            	break;
             	
             case SDL_MOUSEMOTION:
             	x_m = event.motion.x;

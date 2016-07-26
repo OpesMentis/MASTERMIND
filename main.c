@@ -16,6 +16,7 @@
 #include <SDL/SDL_image.h>
 #include "regles.h"
 #include "jeu.h"
+#include "credits.h"
 
 int main (int argc, char **argv) {	
     SDL_Init(SDL_INIT_VIDEO);
@@ -66,6 +67,9 @@ int main (int argc, char **argv) {
             		case 258: /* SDLK_2, le symbole ne marche pas... */
             			continuer = printJeu(ecran);
             			break;
+            		case 259: /* SDLK_3 */
+            			continuer = printCredits(ecran);
+            			break;
             		default:
             			break;
             	}
@@ -94,10 +98,10 @@ int main (int argc, char **argv) {
             	
             	if (is_over(x_m, y_m, *option1a, pos1)) {
             		continuer = printRegles(ecran);
-            	}
-            	
-            	if (is_over(x_m, y_m, *option2a, pos2)) {
+            	} else if (is_over(x_m, y_m, *option2a, pos2)) {
             		continuer = printJeu(ecran);
+            	} else if (is_over(x_m, y_m, *option2a, pos3)) {
+            		continuer = printCredits(ecran);
             	}
             	break;
             
