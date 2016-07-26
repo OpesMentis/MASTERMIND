@@ -17,14 +17,6 @@
 #include "regles.h"
 #include "jeu.h"
 
-/*
-int is_over(int x, int y, SDL_Surface s, SDL_Rect p) {
-	if (x > p.x && x < p.x+(&s)->w && y > p.y && y < p.y+(&s)->h) {
-		return 1;
-	}
-	return 0;
-}*/
-
 int main (int argc, char **argv) {	
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -73,6 +65,7 @@ int main (int argc, char **argv) {
             			break;
             		case 258: /* SDLK_2, le symbole ne marche pas... */
             			continuer = printJeu(ecran);
+            			break;
             		default:
             			break;
             	}
@@ -106,17 +99,24 @@ int main (int argc, char **argv) {
             	if (is_over(x_m, y_m, *option2a, pos2)) {
             		continuer = printJeu(ecran);
             	}
+            	break;
             
             default:
             	break;
         }
         
-        if (continuer == 2) {
-        	continuer = 1;
-        	SDL_BlitSurface(fond, NULL, ecran, &posFond);
-			SDL_BlitSurface(option1a, NULL, ecran, &pos1);
-			SDL_BlitSurface(option2a, NULL, ecran, &pos2);
-			SDL_BlitSurface(option3a, NULL, ecran, &pos3);
+        while (continuer != 1 && continuer != 0) {
+		    if (continuer == 2) {
+		    	continuer = 1;
+		    	SDL_BlitSurface(fond, NULL, ecran, &posFond);
+				SDL_BlitSurface(option1a, NULL, ecran, &pos1);
+				SDL_BlitSurface(option2a, NULL, ecran, &pos2);
+				SDL_BlitSurface(option3a, NULL, ecran, &pos3);
+			} else if (continuer == 3) {
+				continuer = printJeu(ecran);
+			} else if (continuer == 4) {
+				continuer = printRegles(ecran);
+			}
 		}
 		
         SDL_Flip(ecran);
