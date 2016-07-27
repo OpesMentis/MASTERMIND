@@ -112,6 +112,8 @@ int printJeu(SDL_Surface *ecran) {
 	SDL_Surface *annul = IMG_Load("img/annul.png");
 	SDL_Surface *valid = IMG_Load("img/valid.png");
 	
+	SDL_Surface *good = IMG_Load("img/good.png");
+	SDL_Surface *bad = IMG_Load("img/bad.png");
 	SDL_Surface *jouer = IMG_Load("img/partie.png");
 	SDL_Surface *jouers = IMG_Load("img/parties.png");
 	SDL_Surface *menu = IMG_Load("img/menu2.png");
@@ -132,6 +134,7 @@ int printJeu(SDL_Surface *ecran) {
 	SDL_Rect pos_chx[4]; // position des réceptacles des pions
 	SDL_Rect pos_opt[2]; // position des boutons
 	SDL_Rect pos_res[4]; // position des pastilles d'évaluation
+	SDL_Rect pos_smiley = {480, 10};
 	
 	SDL_BlitSurface(jeu, NULL, ecran, &pos);
 	
@@ -278,6 +281,11 @@ int printJeu(SDL_Surface *ecran) {
 									
 								SDL_BlitSurface(vide, NULL, ecran, &pos_chx[i]);
 								SDL_BlitSurface(pions[code[i]], NULL, ecran, &pos_chx[i]);
+							}
+							if (res[0] == 4) {
+								SDL_BlitSurface(good, NULL, ecran, &pos_smiley);
+							} else {
+								SDL_BlitSurface(bad, NULL, ecran, &pos_smiley);
 							}
 							over = 1;
 		        		} else {
