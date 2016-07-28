@@ -144,6 +144,7 @@ int printJeu(SDL_Surface *ecran) {
 		posp[i].y = 46 + 45 * i;
 		
 		SDL_SetColorKey(pions[i], SDL_SRCCOLORKEY, SDL_MapRGB(pions[i]->format, 68, 116, 213));
+		SDL_BlitSurface(pions[i], NULL, ecran, &posp[i]);
 	}
 	for (j = 0; j < 10; j++) {
 		init_pos_chx (pos_chx, j);
