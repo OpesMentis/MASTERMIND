@@ -17,6 +17,7 @@
 #include "regles.h"
 #include "jeu.h"
 #include "credits.h"
+#include "assistant.h"
 
 int main (int argc, char **argv) {	
     SDL_Init(SDL_INIT_VIDEO);
@@ -69,10 +70,10 @@ int main (int argc, char **argv) {
             			break;
             		case SDLK_j:
             			continuer = printJeu(ecran);
-            			break;/*
+            			break;
             		case SDLK_a:
-            			continuer = printCredits(ecran);
-            			break;*/
+            			continuer = printAssistant(ecran);
+            			break;
             		default:
             			break;
             	}
@@ -103,9 +104,9 @@ int main (int argc, char **argv) {
             		continuer = printRegles(ecran);
             	} else if (is_over(x_m, y_m, *option2a, pos2)) {
             		continuer = printJeu(ecran);
-            	} /*else if (is_over(x_m, y_m, *option2a, pos3)) {
-            		continuer = printCredits(ecran);
-            	}*/
+            	} else if (is_over(x_m, y_m, *option2a, pos3)) {
+            		continuer = printAssistant(ecran);
+            	}
             	break;
             
             default:

@@ -6,12 +6,14 @@
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
+#include "assistant.h"
+#include "jeu.h"
 
-int printJeu(SDL_Surface *ecran) {
+int printAssistant(SDL_Surface *ecran) {
 
 	/* Chargement des images */
 	/* Préparation de l'écran de jeu */
-	SDL_Surface *jeu = IMG_Load("img/jeu.png");
+	SDL_Surface *jeu = IMG_Load("img/fond.png");
 	
 	SDL_Surface *vert = IMG_Load("img/vert.png");
 	SDL_Surface *violet = IMG_Load("img/violet.png");
@@ -22,14 +24,22 @@ int printJeu(SDL_Surface *ecran) {
 	SDL_Surface *bleu = IMG_Load("img/bleu.png");
 	SDL_Surface *blanc = IMG_Load("img/blanc.png");
 	
-	SDL_Surface *p_rouge = IMG_Load("img/p_rouge.png");
-	SDL_Surface *p_blanc = IMG_Load("img/p_blanc.png");
+	SDL_Surface *p_rouge0 = IMG_Load("img/p_rouge0.png");
+	SDL_Surface *p_rouge1 = IMG_Load("img/p_rouge1.png");
+	SDL_Surface *p_rouge2 = IMG_Load("img/p_rouge2.png");
+	SDL_Surface *p_rouge3 = IMG_Load("img/p_rouge3.png");
+	SDL_Surface *p_rouge4 = IMG_Load("img/p_rouge4.png");
+	SDL_Surface *p_blanc0 = IMG_Load("img/p_blanc0.png");
+	SDL_Surface *p_blanc1 = IMG_Load("img/p_blanc1.png");
+	SDL_Surface *p_blanc2 = IMG_Load("img/p_blanc2.png");
+	SDL_Surface *p_blanc3 = IMG_Load("img/p_blanc3.png");
+	SDL_Surface *p_blanc4 = IMG_Load("img/p_blanc4.png");
+	SDL_Surface *p_gauche = IMG_Load("img/p_gauche.png");
+	SDL_Surface *p_droite = IMG_Load("img/p_droite.png");
 	SDL_Surface *rien = IMG_Load("img/rien.png");
 	
 	SDL_Surface *vide = IMG_Load("img/vide.png");
 	SDL_Surface *none = IMG_Load("img/none2.png");
-	SDL_Surface *secret = IMG_Load("img/secret.png");
-	SDL_Surface *mask = IMG_Load("img/code.png");
 	SDL_Surface *annul = IMG_Load("img/annul.png");
 	SDL_Surface *valid = IMG_Load("img/valid.png");
 	
@@ -48,14 +58,13 @@ int printJeu(SDL_Surface *ecran) {
 							  noir, jaune, bleu, blanc };
 	SDL_Rect posp[8]; // position des pions
 	SDL_Rect pos = {0, 0}; // position de l'écran de jeu
-	SDL_Rect pos_sec = {220, 12}; // position de 'secret'
 	SDL_Rect pos_reg = {40, 440}; // position du bouton 'Règles'
 	SDL_Rect pos_jou = {240, 440}; // position du bouton 'Nouvelle partie'
 	SDL_Rect pos_men = {440, 440}; // position du bouton 'Menu'
 	SDL_Rect pos_chx[4]; // position des réceptacles des pions
 	SDL_Rect pos_opt[2]; // position des boutons
-	SDL_Rect pos_res[4]; // position des pastilles d'évaluation
-	SDL_Rect pos_smiley = {480, 10};
+	SDL_Rect pos_res[2] = {{460, 390}, {530, 390}}; // position des pastilles d'évaluation
+	SDL_Rect pos_fle[4] = {{450, 390}, {480, 390}, {520, 390}, {550, 390}}; // position des fléchettes
 	
 	SDL_BlitSurface(jeu, NULL, ecran, &pos);
 	
@@ -65,6 +74,7 @@ int printJeu(SDL_Surface *ecran) {
 		posp[i].y = 46 + 45 * i;
 		
 		SDL_SetColorKey(pions[i], SDL_SRCCOLORKEY, SDL_MapRGB(pions[i]->format, 68, 116, 213));
+		SDL_BlitSurface(pions[i], NULL, ecran, &posp[i]);
 	}
 	for (j = 0; j < 10; j++) {
 		init_pos_chx (pos_chx, j);
@@ -74,20 +84,27 @@ int printJeu(SDL_Surface *ecran) {
 	}
 	
 	init_pos_chx(pos_chx, 0);
-	init_pos_opt(pos_opt, 0);
-	init_pos_res(pos_res, 0);
+//	init_pos_opt(pos_opt, 0);
+//	init_pos_res(pos_res, 0);
 	
-	SDL_BlitSurface(annul, NULL, ecran, &pos_opt[0]);
+//	SDL_BlitSurface(annul, NULL, ecran, &pos_opt[0]);
 	SDL_BlitSurface(jouer, NULL, ecran, &pos_jou);
 	SDL_BlitSurface(regle, NULL, ecran, &pos_reg);
 	SDL_BlitSurface(menu, NULL, ecran, &pos_men);
+	
+	SDL_BlitSurface(p_rouge0, NULL, ecran, &pos_res[0]);
+	SDL_BlitSurface(p_blanc0, NULL, ecran, &pos_res[1]);
+	SDL_BlitSurface(p_gauche, NULL, ecran, &pos_fle[0]);
+	SDL_BlitSurface(p_gauche, NULL, ecran, &pos_fle[2]);
+	SDL_BlitSurface(p_droite, NULL, ecran, &pos_fle[1]);
+	SDL_BlitSurface(p_droite, NULL, ecran, &pos_fle[3]);
 	
 	/* Jeu à proprement parler */
 	/* Variables utiles */
 	int continuer = 1;
 	int idx = -1;
 	int pass = 0;
-	int x_m, y_m;
+//	int x_m, y_m;
 	SDL_Event event;
 	int n_essai = 0;
 	int essai[4] = {-1, -1, -1, -1};
@@ -96,7 +113,6 @@ int printJeu(SDL_Surface *ecran) {
 	/* Choix du code */
 	int code[4];
 	chx_code(code);
-	SDL_BlitSurface(secret, NULL, ecran, &pos_sec);
 	
 	SDL_Flip(ecran);
 	
@@ -106,185 +122,6 @@ int printJeu(SDL_Surface *ecran) {
            	case SDL_QUIT:
                	continuer = 0;
                	break;
-            
-            case SDL_KEYDOWN:
-            	switch (event.key.keysym.sym) {
-            		case SDLK_m:
-            			continuer = 2;
-            			break;
-            		case SDLK_n:
-            			continuer = 3;
-            			break;
-            		case SDLK_r:
-            			continuer = 4;
-            			break;
-            		default:
-            			break;
-            	}
-            	break;
-            	
-            case SDL_MOUSEMOTION:
-            	x_m = event.motion.x;
-            	y_m = event.motion.y;
-            	
-            	if (!over) {
-            		if (is_over(x_m, y_m, *annul, pos_opt[0])) {
-            			SDL_BlitSurface(vide, NULL, ecran, &pos_opt[0]);
-            		} else if (all_fill(essai) && is_over(x_m, y_m, *valid, pos_opt[1])) {
-            			SDL_BlitSurface(vide, NULL, ecran, &pos_opt[1]);
-            		} else if (all_fill(essai)) {
-            			SDL_BlitSurface(valid, NULL, ecran, &pos_opt[1]);
-            			SDL_BlitSurface(annul, NULL, ecran, &pos_opt[0]);
-            		} else {
-            			SDL_BlitSurface(annul, NULL, ecran, &pos_opt[0]);
-            		}
-            	}
-            	
-            	if (is_over(x_m, y_m, *jouer, pos_jou)) {
-            		SDL_BlitSurface(jouers, NULL, ecran, &pos_jou);
-            	} else if (is_over(x_m, y_m, *menu, pos_men)) {
-            		SDL_BlitSurface(menus, NULL, ecran, &pos_men);
-            	} else if (is_over(x_m, y_m, *regle, pos_reg)) {
-            		SDL_BlitSurface(regles, NULL, ecran, &pos_reg);
-            	} else {
-            		SDL_BlitSurface(jouer, NULL, ecran, &pos_jou);
-            		SDL_BlitSurface(menu, NULL, ecran, &pos_men);
-            		SDL_BlitSurface(regle, NULL, ecran, &pos_reg);
-            	}
-            	
-            	break;
-
-            case SDL_MOUSEBUTTONUP:
-		        x_m = event.button.x;
-		       	y_m = event.button.y;
-		       	
-		       	if (is_over(x_m, y_m, *jouer, pos_jou)) {
-            		continuer = 3;
-            		pass = 1;
-            	} else if (is_over(x_m, y_m, *menu, pos_men)) {
-            		continuer = 2;
-            		pass = 1;
-            	} else if (is_over(x_m, y_m, *regle, pos_reg)) {
-            		continuer = 4;
-            		pass = 1;
-            	} else {
-            		SDL_BlitSurface(jouer, NULL, ecran, &pos_jou);
-            		SDL_BlitSurface(menu, NULL, ecran, &pos_men);
-            		SDL_BlitSurface(regle, NULL, ecran, &pos_reg);
-            	}
-		       	
-		       	/* Bouton 'effacer' */
-		       	if (!pass && !over) {
-		        	if (is_over(x_m, y_m, *annul, pos_opt[0])) {
-		        		SDL_SetColorKey(vide, SDL_SRCCOLORKEY, SDL_MapRGB(vide->format, 68, 116, 212));
-		        		for (i = 0; i < 4; i++) {
-		        			essai[i] = -1;
-		        			SDL_BlitSurface(vide, NULL, ecran, &pos_chx[i]);
-		        		}
-		        		SDL_SetColorKey(vide, SDL_SRCCOLORKEY, SDL_MapRGB(vide->format, 68, 116, 213));
-		        		SDL_BlitSurface(none, NULL, ecran, &pos_opt[1]);
-		        		pass = 1;
-		        	}
-		        }
-		        
-		        /* Bouton 'valider' */
-		        if (!pass && !over) {
-		        	if (is_over(x_m, y_m, *valid, pos_opt[1])) {
-		        		SDL_BlitSurface(none, NULL, ecran, &pos_opt[0]);
-		        		SDL_BlitSurface(none, NULL, ecran, &pos_opt[1]);
-		        		int * res = malloc(2);
-		        		res = eval_code(code, essai);
-						if (n_essai == 9 || res[0] == 4) {
-		        			SDL_BlitSurface(mask, NULL, ecran, &pos_sec);
-		        			for (i = 0; i < 4; i++) {
-								pos_chx[i].x = 230 + 50 * i;
-								pos_chx[i].y = 17;
-									
-								SDL_BlitSurface(vide, NULL, ecran, &pos_chx[i]);
-								SDL_BlitSurface(pions[code[i]], NULL, ecran, &pos_chx[i]);
-							}
-							if (res[0] == 4) {
-								SDL_BlitSurface(good, NULL, ecran, &pos_smiley);
-							} else {
-								SDL_BlitSurface(bad, NULL, ecran, &pos_smiley);
-							}
-							over = 1;
-		        		} else {
-		        			if (res[0] == 0 && res[1] == 0) {
-		        				SDL_BlitSurface(rien, NULL, ecran, &pos_res[0]);
-		        			} else {
-				    			j = 0;
-				    			for (i = 0; i < res[0]; i++) {
-				    				SDL_BlitSurface(p_rouge, NULL, ecran, &pos_res[j++]);
-				    			}
-				    			for (i = 0; i < res[1]; i++) {
-				    				SDL_BlitSurface(p_blanc, NULL, ecran, &pos_res[j++]);
-				    			}
-				    		}
-		        			n_essai++;
-		        			init_pos_chx(pos_chx, n_essai);
-							init_pos_opt(pos_opt, n_essai);
-							init_pos_res(pos_res, n_essai);
-							
-							SDL_BlitSurface(annul, NULL, ecran, &pos_opt[0]);
-							for (i = 0; i < 4; i++) { essai[i] = -1; }
-		        		}
-		        		pass = 1;
-		        	}
-		        }
-		       	
-		       	/* Apposition d'une couleur */
-		       	if (!pass && !over) {
-				   	for (i = 0; i < 4; i++) {
-					   	if (is_over(x_m, y_m, *vide, pos_chx[i])) {
-					   		if (idx > -1) {
-					   			SDL_SetColorKey(vide, SDL_SRCCOLORKEY, SDL_MapRGB(vide->format, 68, 116, 212));
-					   			SDL_BlitSurface(vide, NULL, ecran, &pos_chx[i]);
-					   			SDL_SetColorKey(vide, SDL_SRCCOLORKEY, SDL_MapRGB(vide->format, 68, 116, 213));
-					   			SDL_BlitSurface(pions[idx], NULL, ecran, &pos_chx[i]);
-					   			essai[i] = idx;
-					   			
-					   			if (all_fill(essai)) {
-					   				SDL_BlitSurface(valid, NULL, ecran, &pos_opt[1]);
-					   			}
-					   				
-					   		} else {
-					   			SDL_SetColorKey(vide, SDL_SRCCOLORKEY, SDL_MapRGB(vide->format, 68, 116, 212));
-					   			SDL_BlitSurface(vide, NULL, ecran, &pos_chx[i]);
-					   			SDL_SetColorKey(vide, SDL_SRCCOLORKEY, SDL_MapRGB(vide->format, 68, 116, 213));
-					   			essai[i] = -1;
-					   			SDL_BlitSurface(none, NULL, ecran, &pos_opt[1]);
-					   		}
-					   		pass = 1;
-					   		break;
-					   	}
-					}
-				}
-		       	
-		       	/* Sélection d'une couleur */
-		       	if (!pass && !over) {
-				   	for (i = 0; i < 8; i++) {
-		        		if (is_over(x_m, y_m, *pions[i], posp[i])) {
-		        			if (idx > -1) {
-		        				SDL_SetColorKey(pions[idx], SDL_SRCCOLORKEY, SDL_MapRGB(pions[idx]->format, 68, 116, 212));
-		        				SDL_BlitSurface(pions[idx], NULL, ecran, &posp[idx]);
-		        				SDL_SetColorKey(pions[idx], SDL_SRCCOLORKEY, SDL_MapRGB(pions[idx]->format, 68, 116, 213));
-		        			}
-		        			
-		        			if (i != idx) {
-				    			SDL_BlitSurface(vide, NULL, ecran, &posp[i]);
-				    			idx = i;
-				    		} else {
-				    			 idx = -1;
-				    		}
-				    		pass = 1;
-		       				break;
-		        		}
-		        	}
-		        }
-		        
-		        pass = 0;
-            	break;
             	
            	default:
            		break;
