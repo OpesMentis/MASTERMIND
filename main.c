@@ -66,10 +66,10 @@ int main (int argc, char **argv) {
             			break;
             		case SDLK_j:
             			continuer = printJeu(ecran);
-            			break;
-            		case SDLK_c:
+            			break;/*
+            		case SDLK_a:
             			continuer = printCredits(ecran);
-            			break;
+            			break;*/
             		default:
             			break;
             	}
@@ -100,9 +100,9 @@ int main (int argc, char **argv) {
             		continuer = printRegles(ecran);
             	} else if (is_over(x_m, y_m, *option2a, pos2)) {
             		continuer = printJeu(ecran);
-            	} else if (is_over(x_m, y_m, *option2a, pos3)) {
+            	} /*else if (is_over(x_m, y_m, *option2a, pos3)) {
             		continuer = printCredits(ecran);
-            	}
+            	}*/
             	break;
             
             default:
