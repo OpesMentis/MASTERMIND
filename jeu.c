@@ -90,7 +90,7 @@ int printJeu(SDL_Surface *ecran) {
 
 	/* Chargement des images */
 	/* Préparation de l'écran de jeu */
-	SDL_Surface *jeu = IMG_Load("img/jeu.png");
+	SDL_Surface *jeu = IMG_Load("img/fond.png");
 	
 	SDL_Surface *vert = IMG_Load("img/vert.png");
 	SDL_Surface *violet = IMG_Load("img/violet.png");

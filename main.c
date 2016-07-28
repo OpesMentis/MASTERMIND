@@ -25,7 +25,8 @@ int main (int argc, char **argv) {
 	SDL_WM_SetCaption("MASTERMIND", NULL);
 
 	SDL_Surface *ecran = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE);
-	SDL_Surface *fond = IMG_Load("img/accueil.png");
+	SDL_Surface *fond = IMG_Load("img/fond.png");
+	SDL_Surface *logo = IMG_Load("img/logo.png");
 	SDL_Surface *option1a = IMG_Load("img/option1.png");
 	SDL_Surface *option1b = IMG_Load("img/option1s.png");
 	SDL_Surface *option2a = IMG_Load("img/option2.png");
@@ -34,11 +35,13 @@ int main (int argc, char **argv) {
 	SDL_Surface *option3b = IMG_Load("img/option3s.png");
 	
 	SDL_Rect posFond = {0, 0};
+	SDL_Rect posLogo = {160, 20};
 	SDL_Rect pos1 = {170, 150};
 	SDL_Rect pos2 = {170, 250};
 	SDL_Rect pos3 = {170, 350};
 	
 	SDL_BlitSurface(fond, NULL, ecran, &posFond);
+	SDL_BlitSurface(logo, NULL, ecran, &posLogo);
 	SDL_BlitSurface(option1a, NULL, ecran, &pos1);
 	SDL_BlitSurface(option2a, NULL, ecran, &pos2);
 	SDL_BlitSurface(option3a, NULL, ecran, &pos3);
@@ -113,6 +116,7 @@ int main (int argc, char **argv) {
 		    if (continuer == 2) {
 		    	continuer = 1;
 		    	SDL_BlitSurface(fond, NULL, ecran, &posFond);
+		    	SDL_BlitSurface(logo, NULL, ecran, &posLogo);
 				SDL_BlitSurface(option1a, NULL, ecran, &pos1);
 				SDL_BlitSurface(option2a, NULL, ecran, &pos2);
 				SDL_BlitSurface(option3a, NULL, ecran, &pos3);
