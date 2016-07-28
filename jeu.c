@@ -107,10 +107,10 @@ int printJeu(SDL_Surface *ecran) {
 	
 	SDL_Surface *vide = IMG_Load("img/vide.png");
 	SDL_Surface *none = IMG_Load("img/none2.png");
-	SDL_Surface *secret = IMG_Load("img/secret.png");
-	SDL_Surface *mask = IMG_Load("img/code.png");
 	SDL_Surface *annul = IMG_Load("img/annul.png");
 	SDL_Surface *valid = IMG_Load("img/valid.png");
+	SDL_Surface *sec_g = IMG_Load("img/sec_g.png");
+	SDL_Surface *sec_d = IMG_Load("img/sec_d.png");
 	
 	SDL_Surface *good = IMG_Load("img/good.png");
 	SDL_Surface *bad = IMG_Load("img/bad.png");
@@ -127,7 +127,7 @@ int printJeu(SDL_Surface *ecran) {
 							  noir, jaune, bleu, blanc };
 	SDL_Rect posp[8]; // position des pions
 	SDL_Rect pos = {0, 0}; // position de l'écran de jeu
-	SDL_Rect pos_sec = {220, 12}; // position de 'secret'
+	SDL_Rect pos_sec[2] = {{180, 8}, {410, 8}}; // position de 'secret'
 	SDL_Rect pos_reg = {40, 440}; // position du bouton 'Règles'
 	SDL_Rect pos_jou = {240, 440}; // position du bouton 'Nouvelle partie'
 	SDL_Rect pos_men = {440, 440}; // position du bouton 'Menu'
@@ -176,7 +176,8 @@ int printJeu(SDL_Surface *ecran) {
 	/* Choix du code */
 	int code[4];
 	chx_code(code);
-	SDL_BlitSurface(secret, NULL, ecran, &pos_sec);
+	SDL_BlitSurface(sec_g, NULL, ecran, &pos_sec[0]);
+	SDL_BlitSurface(sec_d, NULL, ecran, &pos_sec[1]);
 	
 	SDL_Flip(ecran);
 	
@@ -275,7 +276,6 @@ int printJeu(SDL_Surface *ecran) {
 		        		int * res = malloc(2);
 		        		res = eval_code(code, essai);
 						if (n_essai == 9 || res[0] == 4) {
-		        			SDL_BlitSurface(mask, NULL, ecran, &pos_sec);
 		        			for (i = 0; i < 4; i++) {
 								pos_chx[i].x = 230 + 50 * i;
 								pos_chx[i].y = 17;
