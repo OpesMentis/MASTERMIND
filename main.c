@@ -34,9 +34,9 @@ int main (int argc, char **argv) {
 	SDL_Surface *option3b = IMG_Load("img/option3s.png");
 	
 	SDL_Rect posFond = {0, 0};
-	SDL_Rect pos1 = {150, 150};
-	SDL_Rect pos2 = {150, 250};
-	SDL_Rect pos3 = {150, 350};
+	SDL_Rect pos1 = {170, 150};
+	SDL_Rect pos2 = {170, 250};
+	SDL_Rect pos3 = {170, 350};
 	
 	SDL_BlitSurface(fond, NULL, ecran, &posFond);
 	SDL_BlitSurface(option1a, NULL, ecran, &pos1);
@@ -61,15 +61,15 @@ int main (int argc, char **argv) {
             		case SDLK_ESCAPE:
             			continuer = 0;
             			break;
-            		case 257: /* SDLK_1, le symbole ne marche pas... */
+            		case SDLK_r:
             			continuer = printRegles(ecran);
             			break;
-            		case 258: /* SDLK_2, le symbole ne marche pas... */
+            		case SDLK_j:
             			continuer = printJeu(ecran);
-            			break;
-            		case 259: /* SDLK_3 */
+            			break;/*
+            		case SDLK_a:
             			continuer = printCredits(ecran);
-            			break;
+            			break;*/
             		default:
             			break;
             	}
