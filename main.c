@@ -66,10 +66,10 @@ int main (int argc, char **argv) {
             			break;
             		case SDLK_j:
             			continuer = printJeu(ecran);
-            			break;/*
-            		case SDLK_a:
+            			break;
+            		case SDLK_c:
             			continuer = printCredits(ecran);
-            			break;*/
+            			break;
             		default:
             			break;
             	}
