@@ -137,14 +137,26 @@ int printAssistant(SDL_Surface *ecran) {
 	
 	/* Jeu à proprement parler */
 	/* Variables utiles */
+	SDL_Event event;
+	
 	int continuer = 1;
 	int idx = -1;
 	int pass = 0;
 	int x_m, y_m;
-	SDL_Event event;
 	int n = 0;
-	int n_past[2] = {0, 0};
-	int essai[4] = {-1, -1, -1, -1};
+	int chgt = 0;
+	
+	int *tab[10][2];
+	for (j = 0; j < 10; j++) {
+		tab[j][0] = malloc(4);
+		for (i = 0; i < 4; i++) {
+			tab[j][0][i] = -1;
+		}
+		tab[j][1] = malloc(2);
+		for (i = 0; i < 2; i++) {
+			tab[j][1][i] = 0;
+		}
+	}
 	
 	SDL_Flip(ecran);
 	
@@ -162,16 +174,16 @@ int printAssistant(SDL_Surface *ecran) {
             	
             	if (is_over(x_m, y_m, *menu, pos_men)) {
             		SDL_BlitSurface(menus, NULL, ecran, &pos_men);
-            	} else if (ready_togo(essai, n_past, n, 0) && is_over(x_m, y_m, *haut, pos_evo[0])) {
+            	} else if (ready_togo(tab[n][0], tab[n][1], n, 0) && is_over(x_m, y_m, *haut, pos_evo[0])) {
             		SDL_BlitSurface(hauts, NULL, ecran, &pos_evo[0]);
-            	} else if (ready_togo(essai, n_past, n, 1) && is_over(x_m, y_m, *haut, pos_evo[1])) {
+            	} else if (ready_togo(tab[n][0], tab[n][1], n, 1) && is_over(x_m, y_m, *haut, pos_evo[1])) {
             		SDL_BlitSurface(bass, NULL, ecran, &pos_evo[1]);
             	} else {
             		SDL_BlitSurface(menu, NULL, ecran, &pos_men);
-            		if (ready_togo(essai, n_past, n, 0)) {
+            		if (ready_togo(tab[n][0], tab[n][1], n, 0)) {
             			SDL_BlitSurface(haut, NULL, ecran, &pos_evo[0]);
             		}
-            		if (ready_togo(essai, n_past, n, 1)) {
+            		if (ready_togo(tab[n][0], tab[n][1], n, 1)) {
             			SDL_BlitSurface(bas, NULL, ecran, &pos_evo[1]);
             		}
             	}
@@ -198,8 +210,8 @@ int printAssistant(SDL_Surface *ecran) {
 					   			SDL_BlitSurface(vide, NULL, ecran, &pos_chx[i]);
 					   			SDL_SetColorKey(vide, SDL_SRCCOLORKEY, SDL_MapRGB(vide->format, 68, 116, 213));
 					   			SDL_BlitSurface(pions[idx], NULL, ecran, &pos_chx[i]);
-					   			essai[i] = idx;
-					   			if (ready_togo(essai, n_past, n, 0)) {
+					   			tab[n][0][i] = idx;
+					   			if (ready_togo(tab[n][0], tab[n][1], n, 0)) {
 					   				SDL_BlitSurface(haut, NULL, ecran, &pos_evo[0]);
 					   			}
 					   		} else {
@@ -207,7 +219,7 @@ int printAssistant(SDL_Surface *ecran) {
 					   			SDL_BlitSurface(vide, NULL, ecran, &pos_chx[i]);
 					   			SDL_SetColorKey(vide, SDL_SRCCOLORKEY, SDL_MapRGB(vide->format, 68, 116, 213));
 					   			SDL_BlitSurface(none, NULL, ecran, &pos_evo[0]);
-					   			essai[i] = -1;
+					   			tab[n][0][i] = -1;
 					   		}
 					   		pass = 1;
 					   		break;
@@ -238,41 +250,41 @@ int printAssistant(SDL_Surface *ecran) {
 		        
 		        /* Flèches des pastilles */
 		        if (!pass) {
-		        	if (is_over(x_m, y_m, *p_droite, pos_fle[1]) && n_past[0] < 4) {
-		        		SDL_BlitSurface(p_rouge[++n_past[0]], NULL, ecran, &pos_eva[0]);
+		        	if (is_over(x_m, y_m, *p_droite, pos_fle[1]) && tab[n][1][0] < 4) {
+		        		SDL_BlitSurface(p_rouge[++tab[n][1][0]], NULL, ecran, &pos_eva[0]);
 		        		SDL_BlitSurface(p_gauche, NULL, ecran, &pos_fle[0]);
-		        		if (n_past[0] == 4) {
+		        		if (tab[n][1][0] == 4) {
 		        			SDL_BlitSurface(p_none, NULL, ecran, &pos_fle[1]);
 		        		}
 		        		pass = 1;
-		        	} else if (is_over(x_m, y_m, *p_gauche, pos_fle[0]) && n_past[0] > 0) {
-		        		SDL_BlitSurface(p_rouge[--n_past[0]], NULL, ecran, &pos_eva[0]);
+		        	} else if (is_over(x_m, y_m, *p_gauche, pos_fle[0]) && tab[n][1][0] > 0) {
+		        		SDL_BlitSurface(p_rouge[--tab[n][1][0]], NULL, ecran, &pos_eva[0]);
 		        		SDL_BlitSurface(p_droite, NULL, ecran, &pos_fle[1]);
-		        		if (n_past[0] == 0) {
+		        		if (tab[n][1][0] == 0) {
 		        			SDL_BlitSurface(p_none, NULL, ecran, &pos_fle[0]);
 		        		}
 		        		pass = 1;
-		        	} else if (is_over(x_m, y_m, *p_droite, pos_fle[3]) && n_past[1] < 4) {
-		        		SDL_BlitSurface(p_blanc[++n_past[1]], NULL, ecran, &pos_eva[1]);
+		        	} else if (is_over(x_m, y_m, *p_droite, pos_fle[3]) && tab[n][1][1] < 4) {
+		        		SDL_BlitSurface(p_blanc[++tab[n][1][1]], NULL, ecran, &pos_eva[1]);
 		        		SDL_BlitSurface(p_gauche, NULL, ecran, &pos_fle[2]);
-		        		if (n_past[1] == 4) {
+		        		if (tab[n][1][1] == 4) {
 		        			SDL_BlitSurface(p_none, NULL, ecran, &pos_fle[3]);
 		        		}
 		        		pass = 1;
-		        	} else if (is_over(x_m, y_m, *p_gauche, pos_fle[2]) && n_past[1] > 0) {
-		        		SDL_BlitSurface(p_blanc[--n_past[1]], NULL, ecran, &pos_eva[1]);
+		        	} else if (is_over(x_m, y_m, *p_gauche, pos_fle[2]) && tab[n][1][1] > 0) {
+		        		SDL_BlitSurface(p_blanc[--tab[n][1][1]], NULL, ecran, &pos_eva[1]);
 		        		SDL_BlitSurface(p_droite, NULL, ecran, &pos_fle[3]);
-		        		if (n_past[1] == 0) {
+		        		if (tab[n][1][1] == 0) {
 		        			SDL_BlitSurface(p_none, NULL, ecran, &pos_fle[2]);
 		        		}
 		        	}
 		        	
-		        	if (ready_togo(essai, n_past, n, 0)) {
+		        	if (ready_togo(tab[n][0], tab[n][1], n, 0)) {
 						SDL_BlitSurface(haut, NULL, ecran, &pos_evo[0]);
 					} else {
 						SDL_BlitSurface(none, NULL, ecran, &pos_evo[0]);
 					}
-					if (ready_togo(essai, n_past, n, 1)) {
+					if (ready_togo(tab[n][0], tab[n][1], n, 1)) {
 						SDL_BlitSurface(bas, NULL, ecran, &pos_evo[1]);
 					} else {
 						SDL_BlitSurface(none, NULL, ecran, &pos_evo[1]);
@@ -281,30 +293,54 @@ int printAssistant(SDL_Surface *ecran) {
 		        }
 		        
 		        /* Flèches d'évolution */
-		        if (!pass) {
-		        	if (ready_togo(essai, n_past, n, 0) && is_over(x_m, y_m, *haut, pos_evo[0])) {
+			    if (!pass) {
+			    	if (ready_togo(tab[n][0], tab[n][1], n, 0) && is_over(x_m, y_m, *haut, pos_evo[0])) {
+			    		chgt = 1;
+			    	} else if (ready_togo(tab[n][0], tab[n][1], n, 1) && is_over(x_m, y_m, *bas, pos_evo[1])) {
+			    		chgt = -1;
+			    	}
+			    	
+			    	if (chgt != 0) {
+			    	
 						for (i = 0; i < 4; i++) {
 							SDL_BlitSurface(p_none, NULL, ecran, &pos_fle[i]);
-							essai[i] = -1;
 						}
 						for (i = 0; i < 2; i++) {
 							SDL_BlitSurface(none, NULL, ecran, &pos_evo[i]);
-							n_past[i] = 0;
 						}
-		        		n++;
-		        		init_pos_chx(pos_chx, n);
+						
+						n += chgt;
+						chgt = 0;
+						
+			    		init_pos_chx(pos_chx, n);
 						init_pos_fle(pos_fle, n);
 						init_pos_eva(pos_eva, n);
 						init_pos_evo(pos_evo, n);
 						
-		        		SDL_BlitSurface(bas, NULL, ecran, &pos_evo[1]);
-		        		
-		        		SDL_BlitSurface(p_rouge0, NULL, ecran, &pos_eva[0]);
-						SDL_BlitSurface(p_blanc0, NULL, ecran, &pos_eva[1]);
-						SDL_BlitSurface(p_droite, NULL, ecran, &pos_fle[1]);
-						SDL_BlitSurface(p_droite, NULL, ecran, &pos_fle[3]);
-		        	}
-		        }
+						if (tab[n][1][0] == 0 && tab[n][1][1] == 0) {
+							SDL_BlitSurface(p_rouge0, NULL, ecran, &pos_eva[0]);
+							SDL_BlitSurface(p_blanc0, NULL, ecran, &pos_eva[1]);
+						}
+						if (tab[n][1][0] > 0) {
+							SDL_BlitSurface(p_gauche, NULL, ecran, &pos_fle[0]);
+						}
+						if (tab[n][1][0] < 4) {
+							SDL_BlitSurface(p_droite, NULL, ecran, &pos_fle[1]);
+						}
+						if (tab[n][1][1] > 0) {
+							SDL_BlitSurface(p_gauche, NULL, ecran, &pos_fle[2]);
+						}
+						if (tab[n][1][1] < 4) {
+							SDL_BlitSurface(p_droite, NULL, ecran, &pos_fle[3]);
+						}
+						if (ready_togo(tab[n][0], tab[n][1], n, 0)) {
+							SDL_BlitSurface(haut, NULL, ecran, &pos_evo[0]);
+						}
+						if (ready_togo(tab[n][0], tab[n][1], n, 1)) {
+							SDL_BlitSurface(bas, NULL, ecran, &pos_evo[1]);
+						}
+					}
+	        	}
 		        
 		        pass = 0;
             	
