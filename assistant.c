@@ -4,6 +4,7 @@
 *								 *
 *********************************/
 
+#include <math.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
 #include "assistant.h"
@@ -48,6 +49,16 @@ int ready_togo (int code[4], int n_past[2], int n, int sens) { /* 0 = haut, 1 = 
 		return 1;
 	}
 	return 0;
+}
+
+void decode(int code, int a[4]) {
+	a[3] = code / pow(8, 3);
+	code -= a[3] * pow(8, 3);
+	a[2] = code / pow(8, 2);
+	code -= a[2] * pow(8, 2);
+	a[1] = code / pow(8, 1);
+	code -= a[1] * 8;
+	a[0] = code;
 }
 
 int printAssistant(SDL_Surface *ecran) {
@@ -146,6 +157,11 @@ int printAssistant(SDL_Surface *ecran) {
 	int n = 0;
 	int chgt = 0;
 	
+	int cc;
+	int blank4[4];
+	int blank2[2];
+	long s_possible = 0;
+
 	int *tab[10][2];
 	for (j = 0; j < 10; j++) {
 		tab[j][0] = malloc(4);
@@ -157,7 +173,9 @@ int printAssistant(SDL_Surface *ecran) {
 			tab[j][1][i] = 0;
 		}
 	}
-	
+
+//	reset_array(possible);
+
 	SDL_Flip(ecran);
 	
 	while (continuer == 1) {
@@ -170,7 +188,6 @@ int printAssistant(SDL_Surface *ecran) {
             case SDL_MOUSEMOTION:
             	x_m = event.motion.x;
             	y_m = event.motion.y;
-            	
             	
             	if (is_over(x_m, y_m, *menu, pos_men)) {
             		SDL_BlitSurface(menus, NULL, ecran, &pos_men);
@@ -301,16 +318,32 @@ int printAssistant(SDL_Surface *ecran) {
 			    	}
 			    	
 			    	if (chgt != 0) {
-			    	
 						for (i = 0; i < 4; i++) {
 							SDL_BlitSurface(p_none, NULL, ecran, &pos_fle[i]);
 						}
 						for (i = 0; i < 2; i++) {
 							SDL_BlitSurface(none, NULL, ecran, &pos_evo[i]);
 						}
-						
+
 						n += chgt;
 						chgt = 0;
+						
+						for (i = 0; i < pow(8, 4); i++) {
+							cc = 1;
+							for (j = 0; j < n; j++) {
+								decode(i, blank4);
+								eval_code(blank4, tab[j][0], blank2);
+								
+								if (blank2[0] != tab[j][1][0] || blank2[1] != tab[j][1][1]) {
+									cc = 0;
+									break;
+								}
+							}
+							s_possible += cc;
+						}
+						
+						printf("%ld\n", s_possible);
+						s_possible = 0;
 						
 			    		init_pos_chx(pos_chx, n);
 						init_pos_fle(pos_fle, n);
@@ -349,6 +382,43 @@ int printAssistant(SDL_Surface *ecran) {
        	}
        	SDL_Flip(ecran);
     }
+    
+    
+    
+	SDL_FreeSurface(jeu);
+	
+	SDL_FreeSurface(vert);
+	SDL_FreeSurface(violet);
+	SDL_FreeSurface(rouge);
+	SDL_FreeSurface(orange);
+	SDL_FreeSurface(noir);
+	SDL_FreeSurface(jaune);
+	SDL_FreeSurface(bleu);
+	SDL_FreeSurface(blanc);
+	
+	SDL_FreeSurface(p_rouge0);
+	SDL_FreeSurface(p_rouge1);
+	SDL_FreeSurface(p_rouge2);
+	SDL_FreeSurface(p_rouge3);
+	SDL_FreeSurface(p_rouge4);
+	SDL_FreeSurface(p_blanc0);
+	SDL_FreeSurface(p_blanc1);
+	SDL_FreeSurface(p_blanc2);
+	SDL_FreeSurface(p_blanc3);
+	SDL_FreeSurface(p_blanc4);
+	SDL_FreeSurface(p_gauche);
+	SDL_FreeSurface(p_droite);
+	SDL_FreeSurface(p_none);
+	
+	SDL_FreeSurface(vide);
+	SDL_FreeSurface(none);
+	SDL_FreeSurface(haut);
+	SDL_FreeSurface(bas);
+	SDL_FreeSurface(hauts);
+	SDL_FreeSurface(bass);
+	
+	SDL_FreeSurface(menu);
+	SDL_FreeSurface(menus);
 	
 	return continuer;
 }
