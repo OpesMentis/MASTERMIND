@@ -10,8 +10,7 @@
 #include "jeu.h"
 #include "regles.h"
 
-int * eval_code(int code[4], int prop[4]) {
-	int * res = malloc(2);
+void eval_code(int code[4], int prop[4], int res[2]) {
 	res[0] = 0; res[1] = 0;
 	int st_prop[4] = {0, 0, 0, 0};
 	int st_code[4] = {0, 0, 0, 0};
@@ -36,8 +35,6 @@ int * eval_code(int code[4], int prop[4]) {
 			}
 		}
 	}
-	
-	return res;
 }
 
 int all_fill(int code[4]) {
@@ -274,7 +271,7 @@ int printJeu(SDL_Surface *ecran) {
 		        		SDL_BlitSurface(none, NULL, ecran, &pos_opt[0]);
 		        		SDL_BlitSurface(none, NULL, ecran, &pos_opt[1]);
 		        		int * res = malloc(2);
-		        		res = eval_code(code, essai);
+		        		eval_code(code, essai, res);
 						if (n_essai == 9 || res[0] == 4) {
 		        			for (i = 0; i < 4; i++) {
 								pos_chx[i].x = 230 + 50 * i;

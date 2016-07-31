@@ -7,7 +7,7 @@ void init_pos_chx (SDL_Rect pos[4], int n);
 int is_over(int x, int y, SDL_Surface s, SDL_Rect p);
 int all_fill(int code[4]);
 void init_pos_opt (SDL_Rect pos[2], int n);
-int * eval_code(int code[4], int prop[4]);
+void eval_code(int code[4], int prop[4], int res[2]);
 void init_pos_res (SDL_Rect pos[4], int n);
 
 #endif
