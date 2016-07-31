@@ -133,6 +133,14 @@ int main (int argc, char **argv) {
     
     SDL_FreeSurface(fond);
     SDL_FreeSurface(ecran);
+    
+	SDL_FreeSurface(option1a);
+	SDL_FreeSurface(option1b);
+	SDL_FreeSurface(option2a);
+	SDL_FreeSurface(option2b);	
+	SDL_FreeSurface(option3a);
+	SDL_FreeSurface(option3b);
+    
     SDL_Quit();
  
     return EXIT_SUCCESS;
