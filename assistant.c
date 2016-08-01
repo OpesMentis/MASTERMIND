@@ -38,6 +38,14 @@ void init_pos_evo (SDL_Rect pos[2], int n) {
 	}
 }
 
+void init_pos_nb (SDL_Rect pos[4], int n) {
+	int i;
+	for (i = 0; i < 4; i++) {
+		pos[i].x = 150 + 15 * i;
+		pos[i].y = 378 - 35 * n;
+	}
+}
+
 int ready_togo (int code[4], int n_past[2], int n, int sens) { /* 0 = haut, 1 = bas */
 	if (sens == 0) {
 		if (all_fill(code) && n_past[0] + n_past[1] <= 4 && n < 9) {
@@ -59,6 +67,16 @@ void decode(int code, int a[4]) {
 	a[1] = code / pow(8, 1);
 	code -= a[1] * 8;
 	a[0] = code;
+}
+
+void nb_decompo(int nb, int a[4]) {
+	a[0] = nb / 1000;
+	nb -= 1000 * a[0];
+	a[1] = nb / 100;
+	nb -= 100 * a[1];
+	a[2] = nb / 10;
+	nb -= 10 * a[2];
+	a[3] = nb;
 }
 
 int printAssistant(SDL_Surface *ecran) {
@@ -97,6 +115,17 @@ int printAssistant(SDL_Surface *ecran) {
 	SDL_Surface *hauts = IMG_Load("img/hauts.png");
 	SDL_Surface *bass = IMG_Load("img/bass.png");
 	
+	SDL_Surface *nb0 = IMG_Load("img/nb0.png");
+	SDL_Surface *nb1 = IMG_Load("img/nb1.png");
+	SDL_Surface *nb2 = IMG_Load("img/nb2.png");
+	SDL_Surface *nb3 = IMG_Load("img/nb3.png");
+	SDL_Surface *nb4 = IMG_Load("img/nb4.png");
+	SDL_Surface *nb5 = IMG_Load("img/nb5.png");
+	SDL_Surface *nb6 = IMG_Load("img/nb6.png");
+	SDL_Surface *nb7 = IMG_Load("img/nb7.png");
+	SDL_Surface *nb8 = IMG_Load("img/nb8.png");
+	SDL_Surface *nb9 = IMG_Load("img/nb9.png");
+	
 	SDL_Surface *menu = IMG_Load("img/menu2.png");
 	SDL_Surface *menus = IMG_Load("img/menu2s.png");
 	
@@ -104,10 +133,12 @@ int printAssistant(SDL_Surface *ecran) {
 	
 	SDL_Surface *pions[8] = { vert, violet, rouge, orange,
 							  noir, jaune, bleu, blanc };
-	SDL_Surface *p_rouge[5] = {p_rouge0, p_rouge1, p_rouge2,
-							   p_rouge3, p_rouge4};
-	SDL_Surface *p_blanc[5] = {p_blanc0, p_blanc1, p_blanc2,
-							   p_blanc3, p_blanc4};
+	SDL_Surface *p_rouge[5] = { p_rouge0, p_rouge1, p_rouge2,
+								p_rouge3, p_rouge4};
+	SDL_Surface *p_blanc[5] = { p_blanc0, p_blanc1, p_blanc2,
+								p_blanc3, p_blanc4};
+	SDL_Surface *nb[10] = { nb0, nb1, nb2, nb3, nb4,
+							nb5, nb6, nb7, nb8, nb9};
 							  
 	SDL_Rect posp[8]; // position des pions
 	SDL_Rect pos = {0, 0}; // position de l'écran de jeu
@@ -116,6 +147,7 @@ int printAssistant(SDL_Surface *ecran) {
 	SDL_Rect pos_eva[2]; // position des pastilles d'évaluation
 	SDL_Rect pos_fle[4]; // position des fléchettes
 	SDL_Rect pos_evo[2]; // position des flèches haut/bas
+	SDL_Rect pos_nb[4]; // position du nombre de combinaisons restantes
 	
 	SDL_BlitSurface(jeu, NULL, ecran, &pos);
 	
@@ -138,6 +170,7 @@ int printAssistant(SDL_Surface *ecran) {
 	init_pos_fle(pos_fle, 0);
 	init_pos_eva(pos_eva, 0);
 	init_pos_evo(pos_evo, 0);
+	init_pos_nb(pos_nb, 0);
 
 	SDL_BlitSurface(menu, NULL, ecran, &pos_men);
 	
@@ -326,23 +359,43 @@ int printAssistant(SDL_Surface *ecran) {
 						}
 
 						n += chgt;
-						chgt = 0;
 						
-						for (i = 0; i < pow(8, 4); i++) {
-							cc = 1;
-							for (j = 0; j < n; j++) {
-								decode(i, blank4);
-								eval_code(blank4, tab[j][0], blank2);
+						if (chgt > 0) {
+							for (i = 0; i < pow(8, 4); i++) {
+								cc = 1;
+								for (j = 0; j < n; j++) {
+									decode(i, blank4);
+									eval_code(blank4, tab[j][0], blank2);
 								
-								if (blank2[0] != tab[j][1][0] || blank2[1] != tab[j][1][1]) {
-									cc = 0;
-									break;
+									if (blank2[0] != tab[j][1][0] || blank2[1] != tab[j][1][1]) {
+										cc = 0;
+										break;
+									}
+								}
+								s_possible += cc;
+							}
+							
+							nb_decompo(s_possible, blank4);
+							j = 0;
+							for (i = 0; i < 4; i++) {
+								if (j == 0) {
+									if (blank4[i] > 0) {
+										SDL_BlitSurface(nb[blank4[i]], NULL, ecran, &pos_nb[i]);
+										j = 1;
+									}
+								} else {
+									SDL_BlitSurface(nb[blank4[i]], NULL, ecran, &pos_nb[i]);
 								}
 							}
-							s_possible += cc;
+							init_pos_nb(pos_nb, n);
+						} else {
+							init_pos_nb(pos_nb, n);
+							SDL_BlitSurface(none, NULL, ecran, &pos_nb[0]);
+							SDL_BlitSurface(none, NULL, ecran, &pos_nb[2]);
 						}
 						
-						printf("%ld\n", s_possible);
+						chgt = 0;
+						
 						s_possible = 0;
 						
 			    		init_pos_chx(pos_chx, n);
@@ -382,8 +435,6 @@ int printAssistant(SDL_Surface *ecran) {
        	}
        	SDL_Flip(ecran);
     }
-    
-    
     
 	SDL_FreeSurface(jeu);
 	
