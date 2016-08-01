@@ -12,13 +12,13 @@
 
 void init_pos_fle (SDL_Rect pos[4], int n) {
 	int i;
-	pos[0].x = 450;
+	pos[0].x = 445;
 	pos[1].x = 480;
-	pos[2].x = 520;
+	pos[2].x = 515;
 	pos[3].x = 550;
 	
 	for (i = 0; i < 4; i++) {
-		pos[i].y = 390 - 35*n;
+		pos[i].y = 378 - 35*n;
 	}
 }
 
@@ -26,7 +26,7 @@ void init_pos_eva (SDL_Rect pos[2], int n) {
 	int i;
 	for (i = 0; i < 2; i++) {
 		pos[i].x = 460 + 70 * i;
-		pos[i].y = 390 - 35 * n;
+		pos[i].y = 378 - 35 * n;
 	}
 }
 
