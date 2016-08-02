@@ -128,6 +128,8 @@ int printAssistant(SDL_Surface *ecran) {
 	
 	SDL_Surface *menu = IMG_Load("img/menu2.png");
 	SDL_Surface *menus = IMG_Load("img/menu2s.png");
+	SDL_Surface *reset = IMG_Load("img/reset.png");
+	SDL_Surface *resets = IMG_Load("img/resets.png");
 	SDL_Surface *aide = IMG_Load("img/aide.png");
 	SDL_Surface *aides = IMG_Load("img/aides.png");
 	SDL_Surface *aide1 = IMG_Load("img/assist1.png");
@@ -150,6 +152,7 @@ int printAssistant(SDL_Surface *ecran) {
 	SDL_Rect pos = {0, 0}; // position de l'écran de jeu
 	SDL_Rect pos_men = {440, 440}; // position du bouton 'Menu'
 	SDL_Rect pos_reg = {40, 440};
+	SDL_Rect pos_reset = {240, 440};
 	SDL_Rect pos_chx[4]; // position des réceptacles des pions
 	SDL_Rect pos_eva[2]; // position des pastilles d'évaluation
 	SDL_Rect pos_fle[4]; // position des fléchettes
@@ -183,6 +186,7 @@ int printAssistant(SDL_Surface *ecran) {
 
 	SDL_BlitSurface(menu, NULL, ecran, &pos_men);
 	SDL_BlitSurface(aide, NULL, ecran, &pos_reg);
+	SDL_BlitSurface(reset, NULL, ecran, &pos_reset);
 	
 	SDL_BlitSurface(p_rouge0, NULL, ecran, &pos_eva[0]);
 	SDL_BlitSurface(p_blanc0, NULL, ecran, &pos_eva[1]);
@@ -217,8 +221,6 @@ int printAssistant(SDL_Surface *ecran) {
 		}
 	}
 
-//	reset_array(possible);
-
 	SDL_Flip(ecran);
 	
 	while (continuer == 1) {
@@ -234,6 +236,8 @@ int printAssistant(SDL_Surface *ecran) {
             	
             	if (is_over(x_m, y_m, *menu, pos_men)) {
             		SDL_BlitSurface(menus, NULL, ecran, &pos_men);
+            	} else if (is_over(x_m, y_m, *reset, pos_reset)) {
+            		SDL_BlitSurface(resets, NULL, ecran, &pos_reset);
             	} else if (is_over(x_m, y_m, *aide, pos_reg)) {
             		SDL_BlitSurface(aides, NULL, ecran, &pos_reg);
             		SDL_BlitSurface(aide1, NULL, ecran, &pos_aide1);
@@ -245,8 +249,10 @@ int printAssistant(SDL_Surface *ecran) {
             	} else {
             		SDL_BlitSurface(menu, NULL, ecran, &pos_men);
             		SDL_BlitSurface(aide, NULL, ecran, &pos_reg);
+            		SDL_BlitSurface(reset, NULL, ecran, &pos_reset);
             		SDL_BlitSurface(none_a1, NULL, ecran, &pos_aide1);
             		SDL_BlitSurface(none_a2, NULL, ecran, &pos_aide2);
+            		
             		if (ready_togo(tab[n][0], tab[n][1], n, 0)) {
             			SDL_BlitSurface(haut, NULL, ecran, &pos_evo[0]);
             		}
@@ -442,7 +448,45 @@ int printAssistant(SDL_Surface *ecran) {
 						if (ready_togo(tab[n][0], tab[n][1], n, 1)) {
 							SDL_BlitSurface(bas, NULL, ecran, &pos_evo[1]);
 						}
+						
+						pass = 1;
 					}
+	        	}
+	        	
+	        	/* Réinitialisation */
+	        	if (!pass) {
+	        		if (is_over(x_m, y_m, *reset, pos_reset)) {
+	        			
+	        			SDL_BlitSurface(none, NULL, ecran, &pos_evo[0]);
+	        			
+	        			SDL_SetColorKey(vide, SDL_SRCCOLORKEY, SDL_MapRGB(vide->format, 68, 116, 212));
+						for (n = 9; n >= 0; n--) {
+							init_pos_chx(pos_chx, n);
+							init_pos_fle(pos_fle, n);
+							init_pos_nb(pos_nb, n);
+							init_pos_eva(pos_eva, n);
+							for (i = 0; i < 4; i++) {
+								tab[n][0][i] = -1;
+								if (i < 2) {
+									tab[n][1][i] = 0;
+									SDL_BlitSurface(none, NULL, ecran, &pos_eva[i]);
+									SDL_BlitSurface(none, NULL, ecran, &pos_nb[2 * i]);
+								}
+								SDL_BlitSurface(vide, NULL, ecran, &pos_chx[i]);
+								SDL_BlitSurface(p_none, NULL, ecran, &pos_fle[i]);
+								SDL_BlitSurface(p_none, NULL, ecran, &pos_nb[i]);
+							}
+						}
+						SDL_SetColorKey(vide, SDL_SRCCOLORKEY, SDL_MapRGB(vide->format, 68, 116, 213));
+						
+						n = 0;
+						init_pos_nb(pos_evo, n);
+							
+						SDL_BlitSurface(p_rouge0, NULL, ecran, &pos_eva[0]);
+						SDL_BlitSurface(p_blanc0, NULL, ecran, &pos_eva[1]);
+						SDL_BlitSurface(p_droite, NULL, ecran, &pos_fle[1]);
+						SDL_BlitSurface(p_droite, NULL, ecran, &pos_fle[3]);
+	        		}
 	        	}
 		        
 		        pass = 0;
