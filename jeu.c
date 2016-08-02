@@ -52,11 +52,11 @@ void chx_code(int code[4]) {
 	}
 }
 
-void init_pos_res (SDL_Rect pos[4], int n) {
+void init_pos_res (SDL_Rect pos[2], int n) {
 	int i;
-	for (i = 0; i < 4; i++) {
+	for (i = 0; i < 2; i++) {
 		pos[i].x = 450 + 40 * i;
-		pos[i].y = 390 - 35 * n;
+		pos[i].y = 380 - 35 * n;
 	}
 }
 
@@ -98,9 +98,16 @@ int printJeu(SDL_Surface *ecran) {
 	SDL_Surface *bleu = IMG_Load("img/bleu.png");
 	SDL_Surface *blanc = IMG_Load("img/blanc.png");
 	
-	SDL_Surface *p_rouge = IMG_Load("img/p_rouge.png");
-	SDL_Surface *p_blanc = IMG_Load("img/p_blanc.png");
-	SDL_Surface *rien = IMG_Load("img/rien.png");
+	SDL_Surface *p_rouge0 = IMG_Load("img/p_rouge0.png");
+	SDL_Surface *p_rouge1 = IMG_Load("img/p_rouge1.png");
+	SDL_Surface *p_rouge2 = IMG_Load("img/p_rouge2.png");
+	SDL_Surface *p_rouge3 = IMG_Load("img/p_rouge3.png");
+	SDL_Surface *p_rouge4 = IMG_Load("img/p_rouge4.png");
+	SDL_Surface *p_blanc0 = IMG_Load("img/p_blanc0.png");
+	SDL_Surface *p_blanc1 = IMG_Load("img/p_blanc1.png");
+	SDL_Surface *p_blanc2 = IMG_Load("img/p_blanc2.png");
+	SDL_Surface *p_blanc3 = IMG_Load("img/p_blanc3.png");
+	SDL_Surface *p_blanc4 = IMG_Load("img/p_blanc4.png");
 	
 	SDL_Surface *vide = IMG_Load("img/vide.png");
 	SDL_Surface *none = IMG_Load("img/none2.png");
@@ -126,6 +133,11 @@ int printJeu(SDL_Surface *ecran) {
 	
 	SDL_Surface *pions[8] = { vert, violet, rouge, orange,
 							  noir, jaune, bleu, blanc };
+	SDL_Surface *p_rouge[5] = { p_rouge0, p_rouge1, p_rouge2,
+								p_rouge3, p_rouge4};
+	SDL_Surface *p_blanc[5] = { p_blanc0, p_blanc1, p_blanc2,
+								p_blanc3, p_blanc4};
+							  
 	SDL_Rect posp[8]; // position des pions
 	SDL_Rect pos = {0, 0}; // position de l'écran de jeu
 	SDL_Rect pos_sec[2] = {{180, 8}, {410, 8}}; // position de 'secret'
@@ -134,7 +146,7 @@ int printJeu(SDL_Surface *ecran) {
 	SDL_Rect pos_men = {440, 440}; // position du bouton 'Menu'
 	SDL_Rect pos_chx[4]; // position des réceptacles des pions
 	SDL_Rect pos_opt[2]; // position des boutons
-	SDL_Rect pos_res[4]; // position des pastilles d'évaluation
+	SDL_Rect pos_res[2]; // position des pastilles d'évaluation
 	SDL_Rect pos_smiley = {470, 10};
 	SDL_Rect pos_reg2 = {100, 240};
 	
@@ -229,16 +241,20 @@ int printJeu(SDL_Surface *ecran) {
             		SDL_BlitSurface(jouers, NULL, ecran, &pos_jou);
             	} else if (is_over(x_m, y_m, *menu, pos_men)) {
             		SDL_BlitSurface(menus, NULL, ecran, &pos_men);
-            	} else if (is_over(x_m, y_m, *aide, pos_reg)) {
+            	} else if (!over && is_over(x_m, y_m, *aide, pos_reg)) {
             		SDL_BlitSurface(aides, NULL, ecran, &pos_reg);
             		SDL_BlitSurface(regle1, NULL, ecran, &pos_smiley);
             		SDL_BlitSurface(regle2, NULL, ecran, &pos_reg2);
-            	} else {
+            	} else if (!over) {
             		SDL_BlitSurface(jouer, NULL, ecran, &pos_jou);
             		SDL_BlitSurface(menu, NULL, ecran, &pos_men);
             		SDL_BlitSurface(aide, NULL, ecran, &pos_reg);
             		SDL_BlitSurface(none_r2, NULL, ecran, &pos_smiley);
             		SDL_BlitSurface(none_r1, NULL, ecran, &pos_reg2);
+            	} else {
+            		SDL_BlitSurface(jouer, NULL, ecran, &pos_jou);
+            		SDL_BlitSurface(menu, NULL, ecran, &pos_men);
+            		SDL_BlitSurface(aide, NULL, ecran, &pos_reg);
             	}
             	
             	break;
@@ -291,17 +307,10 @@ int printJeu(SDL_Surface *ecran) {
 							}
 							over = 1;
 		        		} else {
-		        			if (res[0] == 0 && res[1] == 0) {
-		        				SDL_BlitSurface(rien, NULL, ecran, &pos_res[0]);
-		        			} else {
-				    			j = 0;
-				    			for (i = 0; i < res[0]; i++) {
-				    				SDL_BlitSurface(p_rouge, NULL, ecran, &pos_res[j++]);
-				    			}
-				    			for (i = 0; i < res[1]; i++) {
-				    				SDL_BlitSurface(p_blanc, NULL, ecran, &pos_res[j++]);
-				    			}
-				    		}
+
+				    		SDL_BlitSurface(p_rouge[res[0]], NULL, ecran, &pos_res[0]);
+				    		SDL_BlitSurface(p_blanc[res[1]], NULL, ecran, &pos_res[1]);
+				    			
 		        			n_essai++;
 		        			init_pos_chx(pos_chx, n_essai);
 							init_pos_opt(pos_opt, n_essai);
