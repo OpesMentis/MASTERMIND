@@ -379,7 +379,7 @@ int printAssistant(SDL_Surface *ecran) {
 							j = 0;
 							for (i = 0; i < 4; i++) {
 								if (j == 0) {
-									if (blank4[i] > 0) {
+									if (blank4[i] > 0 || i == 3) {
 										SDL_BlitSurface(nb[blank4[i]], NULL, ecran, &pos_nb[i]);
 										j = 1;
 									}
