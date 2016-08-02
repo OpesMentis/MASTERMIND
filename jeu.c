@@ -117,6 +117,10 @@ int printJeu(SDL_Surface *ecran) {
 	SDL_Surface *menus = IMG_Load("img/menu2s.png");
 	SDL_Surface *aide = IMG_Load("img/aide.png");
 	SDL_Surface *aides = IMG_Load("img/aides.png");
+	SDL_Surface *regle1 = IMG_Load("img/regle1.png");
+	SDL_Surface *regle2 = IMG_Load("img/regle2.png");
+	SDL_Surface *none_r1 = IMG_Load("img/none_r1.png");
+	SDL_Surface *none_r2 = IMG_Load("img/none_r2.png");
 	
 	SDL_SetColorKey(vide, SDL_SRCCOLORKEY, SDL_MapRGB(vide->format, 68, 116, 213));
 	
@@ -131,7 +135,8 @@ int printJeu(SDL_Surface *ecran) {
 	SDL_Rect pos_chx[4]; // position des réceptacles des pions
 	SDL_Rect pos_opt[2]; // position des boutons
 	SDL_Rect pos_res[4]; // position des pastilles d'évaluation
-	SDL_Rect pos_smiley = {480, 10};
+	SDL_Rect pos_smiley = {470, 10};
+	SDL_Rect pos_reg2 = {100, 240};
 	
 	SDL_BlitSurface(jeu, NULL, ecran, &pos);
 	
@@ -158,6 +163,8 @@ int printJeu(SDL_Surface *ecran) {
 	SDL_BlitSurface(jouer, NULL, ecran, &pos_jou);
 	SDL_BlitSurface(aide, NULL, ecran, &pos_reg);
 	SDL_BlitSurface(menu, NULL, ecran, &pos_men);
+	
+	SDL_SetColorKey(regle2, SDL_SRCCOLORKEY, SDL_MapRGB(regle2->format, 68, 116, 213));
 	
 	/* Jeu à proprement parler */
 	/* Variables utiles */
@@ -224,10 +231,14 @@ int printJeu(SDL_Surface *ecran) {
             		SDL_BlitSurface(menus, NULL, ecran, &pos_men);
             	} else if (is_over(x_m, y_m, *aide, pos_reg)) {
             		SDL_BlitSurface(aides, NULL, ecran, &pos_reg);
+            		SDL_BlitSurface(regle1, NULL, ecran, &pos_smiley);
+            		SDL_BlitSurface(regle2, NULL, ecran, &pos_reg2);
             	} else {
             		SDL_BlitSurface(jouer, NULL, ecran, &pos_jou);
             		SDL_BlitSurface(menu, NULL, ecran, &pos_men);
             		SDL_BlitSurface(aide, NULL, ecran, &pos_reg);
+            		SDL_BlitSurface(none_r2, NULL, ecran, &pos_smiley);
+            		SDL_BlitSurface(none_r1, NULL, ecran, &pos_reg2);
             	}
             	
             	break;
@@ -242,13 +253,6 @@ int printJeu(SDL_Surface *ecran) {
             	} else if (is_over(x_m, y_m, *menu, pos_men)) {
             		continuer = 2;
             		pass = 1;
-            	} else if (is_over(x_m, y_m, *aide, pos_reg)) {
-            		continuer = 4;
-            		pass = 1;
-            	} else {
-            		SDL_BlitSurface(jouer, NULL, ecran, &pos_jou);
-            		SDL_BlitSurface(menu, NULL, ecran, &pos_men);
-            		SDL_BlitSurface(aide, NULL, ecran, &pos_reg);
             	}
 		       	
 		       	/* Bouton 'effacer' */
