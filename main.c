@@ -28,12 +28,12 @@ int main (int argc, char **argv) {
 	SDL_Surface *ecran = SDL_SetVideoMode(640, 480, 32, SDL_HWSURFACE);
 	SDL_Surface *fond = IMG_Load("img/fond.png");
 	SDL_Surface *logo = IMG_Load("img/logo.png");
-	SDL_Surface *option1a = IMG_Load("img/option1.png");
-	SDL_Surface *option1b = IMG_Load("img/option1s.png");
-	SDL_Surface *option2a = IMG_Load("img/option2.png");
-	SDL_Surface *option2b = IMG_Load("img/option2s.png");	
-	SDL_Surface *option3a = IMG_Load("img/option3.png");
-	SDL_Surface *option3b = IMG_Load("img/option3s.png");
+	SDL_Surface *m_jouer = IMG_Load("img/m_jouer.png");
+	SDL_Surface *m_jouers = IMG_Load("img/m_jouers.png");
+	SDL_Surface *m_aide = IMG_Load("img/m_aide.png");
+	SDL_Surface *m_aides = IMG_Load("img/m_aides.png");	
+	SDL_Surface *m_assistant = IMG_Load("img/m_assistant.png");
+	SDL_Surface *m_assistants = IMG_Load("img/m_assistants.png");
 	
 	SDL_Rect posFond = {0, 0};
 	SDL_Rect posLogo = {160, 20};
@@ -43,9 +43,9 @@ int main (int argc, char **argv) {
 	
 	SDL_BlitSurface(fond, NULL, ecran, &posFond);
 	SDL_BlitSurface(logo, NULL, ecran, &posLogo);
-	SDL_BlitSurface(option1a, NULL, ecran, &pos1);
-	SDL_BlitSurface(option2a, NULL, ecran, &pos2);
-	SDL_BlitSurface(option3a, NULL, ecran, &pos3);
+	SDL_BlitSurface(m_jouer, NULL, ecran, &pos1);
+	SDL_BlitSurface(m_aide, NULL, ecran, &pos2);
+	SDL_BlitSurface(m_assistant, NULL, ecran, &pos3);
 	
 	SDL_Flip(ecran);
 	
@@ -59,40 +59,21 @@ int main (int argc, char **argv) {
             case SDL_QUIT:
                 continuer = 0;
                 break;
-                
-            case SDL_KEYDOWN:
-            	switch (event.key.keysym.sym) {
-            		case SDLK_ESCAPE:
-            			continuer = 0;
-            			break;
-            		case SDLK_r:
-            			continuer = printRegles(ecran);
-            			break;
-            		case SDLK_j:
-            			continuer = printJeu(ecran);
-            			break;
-            		case SDLK_a:
-            			continuer = printAssistant(ecran);
-            			break;
-            		default:
-            			break;
-            	}
-            	break;
             
             case SDL_MOUSEMOTION:
             	x_m = event.motion.x;
             	y_m = event.motion.y;
             	
-            	if (is_over(x_m, y_m, *option1a, pos1)) {
-            		SDL_BlitSurface(option1b, NULL, ecran, &pos1);
-            	} else if (is_over(x_m, y_m, *option2a, pos2)) {
-            		SDL_BlitSurface(option2b, NULL, ecran, &pos2);
-            	} else if (is_over(x_m, y_m, *option3a, pos3)) {
-            		SDL_BlitSurface(option3b, NULL, ecran, &pos3);
+            	if (is_over(x_m, y_m, *m_jouer, pos1)) {
+            		SDL_BlitSurface(m_jouers, NULL, ecran, &pos1);
+            	} else if (is_over(x_m, y_m, *m_aide, pos2)) {
+            		SDL_BlitSurface(m_aides, NULL, ecran, &pos2);
+            	} else if (is_over(x_m, y_m, *m_assistant, pos3)) {
+            		SDL_BlitSurface(m_assistants, NULL, ecran, &pos3);
             	} else {
-            		SDL_BlitSurface(option1a, NULL, ecran, &pos1);
-            		SDL_BlitSurface(option2a, NULL, ecran, &pos2);
-            		SDL_BlitSurface(option3a, NULL, ecran, &pos3);
+            		SDL_BlitSurface(m_jouer, NULL, ecran, &pos1);
+            		SDL_BlitSurface(m_aide, NULL, ecran, &pos2);
+            		SDL_BlitSurface(m_assistant, NULL, ecran, &pos3);
             	}
             	break;
             	
@@ -100,11 +81,11 @@ int main (int argc, char **argv) {
             	x_m = event.button.x;
             	y_m = event.button.y;
             	
-            	if (is_over(x_m, y_m, *option1a, pos1)) {
-            		continuer = printRegles(ecran);
-            	} else if (is_over(x_m, y_m, *option2a, pos2)) {
+            	if (is_over(x_m, y_m, *m_jouer, pos1)) {
             		continuer = printJeu(ecran);
-            	} else if (is_over(x_m, y_m, *option2a, pos3)) {
+            	} else if (is_over(x_m, y_m, *m_aide, pos2)) {
+            		continuer = printRegles(ecran);
+            	} else if (is_over(x_m, y_m, *m_aide, pos3)) {
             		continuer = printAssistant(ecran);
             	}
             	break;
@@ -118,9 +99,9 @@ int main (int argc, char **argv) {
 		    	continuer = 1;
 		    	SDL_BlitSurface(fond, NULL, ecran, &posFond);
 		    	SDL_BlitSurface(logo, NULL, ecran, &posLogo);
-				SDL_BlitSurface(option1a, NULL, ecran, &pos1);
-				SDL_BlitSurface(option2a, NULL, ecran, &pos2);
-				SDL_BlitSurface(option3a, NULL, ecran, &pos3);
+				SDL_BlitSurface(m_jouer, NULL, ecran, &pos1);
+				SDL_BlitSurface(m_aide, NULL, ecran, &pos2);
+				SDL_BlitSurface(m_assistant, NULL, ecran, &pos3);
 			} else if (continuer == 3) {
 				continuer = printJeu(ecran);
 			} else if (continuer == 4) {
@@ -134,12 +115,12 @@ int main (int argc, char **argv) {
     SDL_FreeSurface(fond);
     SDL_FreeSurface(ecran);
     
-	SDL_FreeSurface(option1a);
-	SDL_FreeSurface(option1b);
-	SDL_FreeSurface(option2a);
-	SDL_FreeSurface(option2b);	
-	SDL_FreeSurface(option3a);
-	SDL_FreeSurface(option3b);
+	SDL_FreeSurface(m_jouer);
+	SDL_FreeSurface(m_jouers);
+	SDL_FreeSurface(m_aide);
+	SDL_FreeSurface(m_aides);	
+	SDL_FreeSurface(m_assistant);
+	SDL_FreeSurface(m_assistants);
     
     SDL_Quit();
  

@@ -115,8 +115,8 @@ int printJeu(SDL_Surface *ecran) {
 	SDL_Surface *jouers = IMG_Load("img/parties.png");
 	SDL_Surface *menu = IMG_Load("img/menu2.png");
 	SDL_Surface *menus = IMG_Load("img/menu2s.png");
-	SDL_Surface *regle = IMG_Load("img/regle.png");
-	SDL_Surface *regles = IMG_Load("img/regles.png");
+	SDL_Surface *aide = IMG_Load("img/aide.png");
+	SDL_Surface *aides = IMG_Load("img/aides.png");
 	
 	SDL_SetColorKey(vide, SDL_SRCCOLORKEY, SDL_MapRGB(vide->format, 68, 116, 213));
 	
@@ -156,7 +156,7 @@ int printJeu(SDL_Surface *ecran) {
 	
 	SDL_BlitSurface(annul, NULL, ecran, &pos_opt[0]);
 	SDL_BlitSurface(jouer, NULL, ecran, &pos_jou);
-	SDL_BlitSurface(regle, NULL, ecran, &pos_reg);
+	SDL_BlitSurface(aide, NULL, ecran, &pos_reg);
 	SDL_BlitSurface(menu, NULL, ecran, &pos_men);
 	
 	/* Jeu à proprement parler */
@@ -222,12 +222,12 @@ int printJeu(SDL_Surface *ecran) {
             		SDL_BlitSurface(jouers, NULL, ecran, &pos_jou);
             	} else if (is_over(x_m, y_m, *menu, pos_men)) {
             		SDL_BlitSurface(menus, NULL, ecran, &pos_men);
-            	} else if (is_over(x_m, y_m, *regle, pos_reg)) {
-            		SDL_BlitSurface(regles, NULL, ecran, &pos_reg);
+            	} else if (is_over(x_m, y_m, *aide, pos_reg)) {
+            		SDL_BlitSurface(aides, NULL, ecran, &pos_reg);
             	} else {
             		SDL_BlitSurface(jouer, NULL, ecran, &pos_jou);
             		SDL_BlitSurface(menu, NULL, ecran, &pos_men);
-            		SDL_BlitSurface(regle, NULL, ecran, &pos_reg);
+            		SDL_BlitSurface(aide, NULL, ecran, &pos_reg);
             	}
             	
             	break;
@@ -242,13 +242,13 @@ int printJeu(SDL_Surface *ecran) {
             	} else if (is_over(x_m, y_m, *menu, pos_men)) {
             		continuer = 2;
             		pass = 1;
-            	} else if (is_over(x_m, y_m, *regle, pos_reg)) {
+            	} else if (is_over(x_m, y_m, *aide, pos_reg)) {
             		continuer = 4;
             		pass = 1;
             	} else {
             		SDL_BlitSurface(jouer, NULL, ecran, &pos_jou);
             		SDL_BlitSurface(menu, NULL, ecran, &pos_men);
-            		SDL_BlitSurface(regle, NULL, ecran, &pos_reg);
+            		SDL_BlitSurface(aide, NULL, ecran, &pos_reg);
             	}
 		       	
 		       	/* Bouton 'effacer' */
