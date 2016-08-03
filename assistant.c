@@ -7,6 +7,7 @@
 #include <math.h>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
+#include <time.h>
 #include "assistant.h"
 #include "jeu.h"
 
@@ -57,6 +58,54 @@ int ready_togo (int code[4], int n_past[2], int n, int sens) { /* 0 = haut, 1 = 
 		return 1;
 	}
 	return 0;
+}
+
+void tabcpy(int * dest, int * src, int s) {
+	int i;
+	for (i = 0; i < s; i++) {
+		dest[i] = src[i];
+	}
+}
+
+/* Nombre de possibilités */
+int nb_remain (int * tab[10][2], int n, int * poss) {
+	int blank4[4];
+	int blank2[2];
+	int i, j;
+	
+	int s = 0;
+	
+	for (i = 0; i < pow(8, 4); i++) {
+		poss[i] = 1;
+		for (j = 0; j < n; j++) {
+			decode(i, blank4);
+			eval_code(blank4, tab[j][0], blank2);
+		
+			if (blank2[0] != tab[j][1][0] || blank2[1] != tab[j][1][1]) {
+				poss[i] = 0;
+				break;
+			}
+		}
+		s += poss[i];
+	}
+	
+	return s;
+}
+
+/* Conseil */
+void assist (int * tab[10][2], int n, int * poss, int s, int conseil[4]) {
+	srand(time(NULL));
+	int i = rand() % s;
+	int j = 0;
+	int k = -1;
+	
+	while (j < i) {
+		if (poss[++k] == 1) {
+			j++;
+		}
+	}
+	
+	decode(k, conseil);
 }
 
 void decode(int code, int a[4]) {
@@ -203,11 +252,11 @@ int printAssistant(SDL_Surface *ecran) {
 	int x_m, y_m;
 	int n = 0;
 	int chgt = 0;
-	
-	int cc;
 	int blank4[4];
-	int blank2[2];
-	long s_possible = 0;
+	
+	int * poss = malloc(pow(8, 4) * sizeof(int));
+	int s_possible = 0;
+	int conseil[4];
 
 	int *tab[10][2];
 	for (j = 0; j < 10; j++) {
@@ -384,21 +433,11 @@ int printAssistant(SDL_Surface *ecran) {
 						n += chgt;
 						
 						if (chgt > 0) {
-							for (i = 0; i < pow(8, 4); i++) {
-								cc = 1;
-								for (j = 0; j < n; j++) {
-									decode(i, blank4);
-									eval_code(blank4, tab[j][0], blank2);
-								
-									if (blank2[0] != tab[j][1][0] || blank2[1] != tab[j][1][1]) {
-										cc = 0;
-										break;
-									}
-								}
-								s_possible += cc;
-							}
-							
+							s_possible = nb_remain (tab, n, poss);
+							assist(tab, n, poss, s_possible, conseil);
+							printf("%i-%i-%i-%i\n", conseil[0], conseil[1], conseil[2], conseil[3]);
 							nb_decompo(s_possible, blank4);
+							
 							j = 0;
 							for (i = 0; i < 4; i++) {
 								if (j == 0) {
@@ -411,6 +450,7 @@ int printAssistant(SDL_Surface *ecran) {
 								}
 							}
 							init_pos_nb(pos_nb, n);
+							
 						} else {
 							init_pos_nb(pos_nb, n);
 							SDL_BlitSurface(none, NULL, ecran, &pos_nb[0]);
@@ -418,8 +458,6 @@ int printAssistant(SDL_Surface *ecran) {
 						}
 						
 						chgt = 0;
-						
-						s_possible = 0;
 						
 			    		init_pos_chx(pos_chx, n);
 						init_pos_fle(pos_fle, n);
