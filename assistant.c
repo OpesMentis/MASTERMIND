@@ -23,9 +23,9 @@ void init_pos_fle (SDL_Rect pos[4], int n) {
 	}
 }
 
-void init_pos_eva (SDL_Rect pos[2], int n) {
+void init_pos_eva (SDL_Rect pos[3], int n) {
 	int i;
-	for (i = 0; i < 2; i++) {
+	for (i = 0; i < 3; i++) {
 		pos[i].x = 460 + 70 * i;
 		pos[i].y = 378 - 35 * n;
 	}
@@ -94,18 +94,22 @@ int nb_remain (int * tab[10][2], int n, int * poss) {
 
 /* Conseil */
 void assist (int * tab[10][2], int n, int * poss, int s, int conseil[4]) {
-	srand(time(NULL));
-	int i = rand() % s;
-	int j = 0;
-	int k = -1;
+
+	if (s > 0) {
+		srand(time(NULL));
+		int i = 1+rand() % s;
+		int j = 0;
+		int k = -1;
 	
-	while (j < i) {
-		if (poss[++k] == 1) {
-			j++;
+		while (j < i) {
+			if (poss[++k] == 1) {
+				j++;
+			}
 		}
+		decode(k, conseil);
+	} else {
+		conseil[0] = -1;
 	}
-	
-	decode(k, conseil);
 }
 
 void decode(int code, int a[4]) {
@@ -185,6 +189,8 @@ int printAssistant(SDL_Surface *ecran) {
 	SDL_Surface *aide2 = IMG_Load("img/assist2.png");
 	SDL_Surface *none_a1 = IMG_Load("img/none_a1.png");
 	SDL_Surface *none_a2 = IMG_Load("img/none_a2.png");
+	SDL_Surface *help = IMG_Load("img/help.png");
+	SDL_Surface *helps = IMG_Load("img/helps.png");
 	
 	SDL_SetColorKey(vide, SDL_SRCCOLORKEY, SDL_MapRGB(vide->format, 68, 116, 213));
 	
@@ -203,7 +209,7 @@ int printAssistant(SDL_Surface *ecran) {
 	SDL_Rect pos_reg = {40, 440};
 	SDL_Rect pos_reset = {240, 440};
 	SDL_Rect pos_chx[4]; // position des réceptacles des pions
-	SDL_Rect pos_eva[2]; // position des pastilles d'évaluation
+	SDL_Rect pos_eva[3]; // position des pastilles d'évaluation
 	SDL_Rect pos_fle[4]; // position des fléchettes
 	SDL_Rect pos_evo[2]; // position des flèches haut/bas
 	SDL_Rect pos_nb[4]; // position du nombre de combinaisons restantes
@@ -241,6 +247,7 @@ int printAssistant(SDL_Surface *ecran) {
 	SDL_BlitSurface(p_blanc0, NULL, ecran, &pos_eva[1]);
 	SDL_BlitSurface(p_droite, NULL, ecran, &pos_fle[1]);
 	SDL_BlitSurface(p_droite, NULL, ecran, &pos_fle[3]);
+	SDL_BlitSurface(help, NULL, ecran, &pos_eva[2]);
 	
 	/* Jeu à proprement parler */
 	/* Variables utiles */
@@ -255,7 +262,7 @@ int printAssistant(SDL_Surface *ecran) {
 	int blank4[4];
 	
 	int * poss = malloc(pow(8, 4) * sizeof(int));
-	int s_possible = 0;
+	int s_possible = 4096;
 	int conseil[4];
 
 	int *tab[10][2];
@@ -295,12 +302,15 @@ int printAssistant(SDL_Surface *ecran) {
             		SDL_BlitSurface(hauts, NULL, ecran, &pos_evo[0]);
             	} else if (ready_togo(tab[n][0], tab[n][1], n, 1) && is_over(x_m, y_m, *haut, pos_evo[1])) {
             		SDL_BlitSurface(bass, NULL, ecran, &pos_evo[1]);
+            	} else if (is_over(x_m, y_m, *help, pos_eva[2])) {
+            		SDL_BlitSurface(helps, NULL, ecran, &pos_eva[2]);
             	} else {
             		SDL_BlitSurface(menu, NULL, ecran, &pos_men);
             		SDL_BlitSurface(aide, NULL, ecran, &pos_reg);
             		SDL_BlitSurface(reset, NULL, ecran, &pos_reset);
             		SDL_BlitSurface(none_a1, NULL, ecran, &pos_aide1);
             		SDL_BlitSurface(none_a2, NULL, ecran, &pos_aide2);
+            		SDL_BlitSurface(help, NULL, ecran, &pos_eva[2]);
             		
             		if (ready_togo(tab[n][0], tab[n][1], n, 0)) {
             			SDL_BlitSurface(haut, NULL, ecran, &pos_evo[0]);
@@ -370,6 +380,23 @@ int printAssistant(SDL_Surface *ecran) {
 		        	}
 		        }
 		        
+		        /* Conseil */
+		        if (!pass) {
+		        	if (is_over(x_m, y_m, *help, pos_eva[2])) {
+		        		s_possible = nb_remain(tab, n, poss);
+		        		assist(tab, n, poss, s_possible, conseil);
+						
+						if (conseil[0] == -1) {
+							printf("nope\n");
+						} else {
+				    		for (i = 0; i < 4; i++) {
+				    			SDL_BlitSurface(pions[conseil[i]], NULL, ecran, &pos_chx[i]);
+				    			tab[n][0][i] = conseil[i];
+				    		}
+				    	}
+		        	}
+		        }
+		        
 		        /* Flèches des pastilles */
 		        if (!pass) {
 		        	if (is_over(x_m, y_m, *p_droite, pos_fle[1]) && tab[n][1][0] < 4) {
@@ -411,7 +438,6 @@ int printAssistant(SDL_Surface *ecran) {
 					} else {
 						SDL_BlitSurface(none, NULL, ecran, &pos_evo[1]);
 					}
-					
 		        }
 		        
 		        /* Flèches d'évolution */
@@ -429,13 +455,13 @@ int printAssistant(SDL_Surface *ecran) {
 						for (i = 0; i < 2; i++) {
 							SDL_BlitSurface(none, NULL, ecran, &pos_evo[i]);
 						}
+						
+						SDL_BlitSurface(none, NULL, ecran, &pos_eva[2]);
 
 						n += chgt;
 						
 						if (chgt > 0) {
 							s_possible = nb_remain (tab, n, poss);
-							assist(tab, n, poss, s_possible, conseil);
-							printf("%i-%i-%i-%i\n", conseil[0], conseil[1], conseil[2], conseil[3]);
 							nb_decompo(s_possible, blank4);
 							
 							j = 0;
@@ -463,6 +489,8 @@ int printAssistant(SDL_Surface *ecran) {
 						init_pos_fle(pos_fle, n);
 						init_pos_eva(pos_eva, n);
 						init_pos_evo(pos_evo, n);
+						
+						SDL_BlitSurface(help, NULL, ecran, &pos_eva[2]);
 						
 						if (tab[n][1][0] == 0 && tab[n][1][1] == 0) {
 							SDL_BlitSurface(p_rouge0, NULL, ecran, &pos_eva[0]);
