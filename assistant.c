@@ -541,6 +541,7 @@ int printAssistant(SDL_Surface *ecran) {
 						
 						n = 0;
 						init_pos_nb(pos_evo, n);
+						SDL_BlitSurface(help, NULL, ecran, &pos_eva[2]);
 						SDL_BlitSurface(p_rouge0, NULL, ecran, &pos_eva[0]);
 						SDL_BlitSurface(p_blanc0, NULL, ecran, &pos_eva[1]);
 						SDL_BlitSurface(p_droite, NULL, ecran, &pos_fle[1]);
