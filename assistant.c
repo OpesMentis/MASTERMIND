@@ -184,12 +184,11 @@ int printAssistant(SDL_Surface *ecran) {
 	SDL_Surface *resets = IMG_Load("img/resets.png");
 	SDL_Surface *aide = IMG_Load("img/aide.png");
 	SDL_Surface *aides = IMG_Load("img/aides.png");
-	SDL_Surface *aide1 = IMG_Load("img/assist1.png");
-	SDL_Surface *aide2 = IMG_Load("img/assist2.png");
-	SDL_Surface *none_a1 = IMG_Load("img/none_a1.png");
-	SDL_Surface *none_a2 = IMG_Load("img/none_a2.png");
 	SDL_Surface *help = IMG_Load("img/help.png");
 	SDL_Surface *helps = IMG_Load("img/helps.png");
+	
+	SDL_Surface *aide_g = IMG_Load("img/assist_g.png");
+	SDL_Surface *none_aide_g = IMG_Load("img/none_assist_g.png");
 	
 	SDL_SetColorKey(vide, SDL_SRCCOLORKEY, SDL_MapRGB(vide->format, 68, 116, 213));
 	
@@ -212,8 +211,7 @@ int printAssistant(SDL_Surface *ecran) {
 	SDL_Rect pos_fle[4]; // position des fléchettes
 	SDL_Rect pos_evo[2]; // position des flèches haut/bas
 	SDL_Rect pos_nb[4]; // position du nombre de combinaisons restantes
-	SDL_Rect pos_aide1 = {450, 5};
-	SDL_Rect pos_aide2 = {110, 5};
+	SDL_Rect pos_aide = {110, 4};
 	
 	SDL_BlitSurface(jeu, NULL, ecran, &pos);
 	
@@ -299,8 +297,7 @@ int printAssistant(SDL_Surface *ecran) {
             		SDL_BlitSurface(resets, NULL, ecran, &pos_reset);
             	} else if (is_over(x_m, y_m, *aide, pos_reg)) {
             		SDL_BlitSurface(aides, NULL, ecran, &pos_reg);
-            		SDL_BlitSurface(aide1, NULL, ecran, &pos_aide1);
-            		SDL_BlitSurface(aide2, NULL, ecran, &pos_aide2);
+            		SDL_BlitSurface(aide_g, NULL, ecran, &pos_aide);
             	} else if (ready_togo(tab[n][0], tab[n][1], n, 0) && is_over(x_m, y_m, *haut, pos_evo[0])) {
             		SDL_BlitSurface(hauts, NULL, ecran, &pos_evo[0]);
             	} else if (ready_togo(tab[n][0], tab[n][1], n, 1) && is_over(x_m, y_m, *haut, pos_evo[1])) {
@@ -311,8 +308,7 @@ int printAssistant(SDL_Surface *ecran) {
             		SDL_BlitSurface(menu, NULL, ecran, &pos_men);
             		SDL_BlitSurface(aide, NULL, ecran, &pos_reg);
             		SDL_BlitSurface(reset, NULL, ecran, &pos_reset);
-            		SDL_BlitSurface(none_a1, NULL, ecran, &pos_aide1);
-            		SDL_BlitSurface(none_a2, NULL, ecran, &pos_aide2);
+            		SDL_BlitSurface(none_aide_g, NULL, ecran, &pos_aide);
             		SDL_BlitSurface(help, NULL, ecran, &pos_eva[2]);
             		
             		if (ready_togo(tab[n][0], tab[n][1], n, 0)) {
