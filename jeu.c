@@ -118,6 +118,9 @@ int printJeu(SDL_Surface *ecran) {
 	
 	SDL_Surface *good = IMG_Load("img/good.png");
 	SDL_Surface *bad = IMG_Load("img/bad.png");
+	SDL_Surface *meh = IMG_Load("img/meh.png");
+	SDL_Surface *abandon = IMG_Load("img/abandon.png");
+	SDL_Surface *abandons = IMG_Load("img/abandons.png");
 	SDL_Surface *jouer = IMG_Load("img/partie.png");
 	SDL_Surface *jouers = IMG_Load("img/parties.png");
 	SDL_Surface *menu = IMG_Load("img/menu2.png");
@@ -172,7 +175,7 @@ int printJeu(SDL_Surface *ecran) {
 	init_pos_res(pos_res, 0);
 	
 	SDL_BlitSurface(annul, NULL, ecran, &pos_opt[0]);
-	SDL_BlitSurface(jouer, NULL, ecran, &pos_jou);
+	SDL_BlitSurface(abandon, NULL, ecran, &pos_jou);
 	SDL_BlitSurface(aide, NULL, ecran, &pos_reg);
 	SDL_BlitSurface(menu, NULL, ecran, &pos_men);
 	
@@ -238,7 +241,11 @@ int printJeu(SDL_Surface *ecran) {
             	}
             	
             	if (is_over(x_m, y_m, *jouer, pos_jou)) {
-            		SDL_BlitSurface(jouers, NULL, ecran, &pos_jou);
+            		if (!over) {
+            			SDL_BlitSurface(abandons, NULL, ecran, &pos_jou);
+            		} else {
+            			SDL_BlitSurface(jouers, NULL, ecran, &pos_jou);
+            		}
             	} else if (is_over(x_m, y_m, *menu, pos_men)) {
             		SDL_BlitSurface(menus, NULL, ecran, &pos_men);
             	} else if (!over && is_over(x_m, y_m, *aide, pos_reg)) {
@@ -246,7 +253,7 @@ int printJeu(SDL_Surface *ecran) {
             		SDL_BlitSurface(regle1, NULL, ecran, &pos_smiley);
             		SDL_BlitSurface(regle2, NULL, ecran, &pos_reg2);
             	} else if (!over) {
-            		SDL_BlitSurface(jouer, NULL, ecran, &pos_jou);
+            		SDL_BlitSurface(abandon, NULL, ecran, &pos_jou);
             		SDL_BlitSurface(menu, NULL, ecran, &pos_men);
             		SDL_BlitSurface(aide, NULL, ecran, &pos_reg);
             		SDL_BlitSurface(none_r2, NULL, ecran, &pos_smiley);
@@ -263,12 +270,28 @@ int printJeu(SDL_Surface *ecran) {
 		        x_m = event.button.x;
 		       	y_m = event.button.y;
 		       	
-		       	if (is_over(x_m, y_m, *jouer, pos_jou)) {
+		       	if (over && is_over(x_m, y_m, *jouer, pos_jou)) {
             		continuer = 3;
             		pass = 1;
             	} else if (is_over(x_m, y_m, *menu, pos_men)) {
             		continuer = 2;
             		pass = 1;
+            	}
+            	
+            	/* Bouton 'abandon' */
+            	if (!pass && !over) {
+            		if (is_over(x_m, y_m, *jouer, pos_jou)) {
+		    			for (i = 0; i < 4; i++) {
+							pos_chx[i].x = 230 + 50 * i;
+							pos_chx[i].y = 17;
+							
+							SDL_BlitSurface(vide, NULL, ecran, &pos_chx[i]);
+							SDL_BlitSurface(pions[code[i]], NULL, ecran, &pos_chx[i]);
+							SDL_BlitSurface(meh, NULL, ecran, &pos_smiley);
+							SDL_BlitSurface(jouers, NULL, ecran, &pos_jou);
+							over = 1;
+						}
+					}
             	}
 		       	
 		       	/* Bouton 'effacer' */
@@ -305,6 +328,7 @@ int printJeu(SDL_Surface *ecran) {
 							} else {
 								SDL_BlitSurface(bad, NULL, ecran, &pos_smiley);
 							}
+							SDL_BlitSurface(jouer, NULL, ecran, &pos_jou);
 							over = 1;
 		        		} else {
 
