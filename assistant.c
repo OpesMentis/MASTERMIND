@@ -94,7 +94,6 @@ int nb_remain (int * tab[10][2], int n, int * poss) {
 
 /* Conseil */
 void assist (int * tab[10][2], int n, int * poss, int s, int conseil[4]) {
-
 	if (s > 0) {
 		srand(time(NULL));
 		int i = 1+rand() % s;
@@ -276,6 +275,10 @@ int printAssistant(SDL_Surface *ecran) {
 			tab[j][1][i] = 0;
 		}
 	}
+	
+	for (i = 0; i < s_possible; i++) {
+		poss[i] = 1;
+	}
 
 	SDL_Flip(ecran);
 	
@@ -383,13 +386,9 @@ int printAssistant(SDL_Surface *ecran) {
 		        /* Conseil */
 		        if (!pass) {
 		        	if (is_over(x_m, y_m, *help, pos_eva[2])) {
-		        		s_possible = nb_remain(tab, n, poss);
 		        		assist(tab, n, poss, s_possible, conseil);
-						
-						if (conseil[0] == -1) {
-							printf("nope\n");
-						} else {
-				    		for (i = 0; i < 4; i++) {
+						if (conseil[0] != -1) {
+							for (i = 0; i < 4; i++) {
 				    			SDL_BlitSurface(pions[conseil[i]], NULL, ecran, &pos_chx[i]);
 				    			tab[n][0][i] = conseil[i];
 				    		}
@@ -459,9 +458,9 @@ int printAssistant(SDL_Surface *ecran) {
 						SDL_BlitSurface(none, NULL, ecran, &pos_eva[2]);
 
 						n += chgt;
+						s_possible = nb_remain (tab, n, poss);
 						
 						if (chgt > 0) {
-							s_possible = nb_remain (tab, n, poss);
 							nb_decompo(s_possible, blank4);
 							
 							j = 0;
@@ -522,9 +521,8 @@ int printAssistant(SDL_Surface *ecran) {
 	        	/* Réinitialisation */
 	        	if (!pass) {
 	        		if (is_over(x_m, y_m, *reset, pos_reset)) {
-	        			
 	        			SDL_BlitSurface(none, NULL, ecran, &pos_evo[0]);
-	        			
+	        			SDL_BlitSurface(none, NULL, ecran, &pos_eva[2]);
 	        			SDL_SetColorKey(vide, SDL_SRCCOLORKEY, SDL_MapRGB(vide->format, 68, 116, 212));
 						for (n = 9; n >= 0; n--) {
 							init_pos_chx(pos_chx, n);
@@ -547,7 +545,6 @@ int printAssistant(SDL_Surface *ecran) {
 						
 						n = 0;
 						init_pos_nb(pos_evo, n);
-							
 						SDL_BlitSurface(p_rouge0, NULL, ecran, &pos_eva[0]);
 						SDL_BlitSurface(p_blanc0, NULL, ecran, &pos_eva[1]);
 						SDL_BlitSurface(p_droite, NULL, ecran, &pos_fle[1]);
