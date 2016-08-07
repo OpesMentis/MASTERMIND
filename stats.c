@@ -18,7 +18,7 @@
 void read_stats (char data[3][6]) {
 	FILE *f_stats = fopen("DATA", "r");
 	if (f_stats == NULL) {
-		exit(EXIT_FAILURE);
+		reset_stats();
 	}
 	
 	int i = 0;
