@@ -16,7 +16,6 @@
 #include <SDL/SDL_image.h>
 #include "stats.h"
 #include "jeu.h"
-#include "credits.h"
 #include "assistant.h"
 
 int main (int argc, char **argv) {	
@@ -36,7 +35,7 @@ int main (int argc, char **argv) {
 	SDL_Surface *m_stats = IMG_Load("img/m_stats.png");
 	
 	SDL_Rect posFond = {0, 0};
-	SDL_Rect posLogo = {160, 20};
+	SDL_Rect posLogo = {160, 30};
 	SDL_Rect pos1 = {170, 150};
 	SDL_Rect pos2 = {170, 250};
 	SDL_Rect pos3 = {170, 350};
