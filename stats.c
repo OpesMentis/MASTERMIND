@@ -18,7 +18,11 @@
 void read_stats (char data[3][6]) {
 	FILE *f_stats = fopen("DATA", "r");
 	if (f_stats == NULL) {
+		strcpy(data[0], "0");
+		strcpy(data[1], "0");
+		strcpy(data[2], "0");
 		reset_stats();
+		return;
 	}
 	
 	int i = 0;
