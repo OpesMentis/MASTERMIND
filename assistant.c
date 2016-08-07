@@ -60,13 +60,6 @@ int ready_togo (int code[4], int n_past[2], int n, int sens) { /* 0 = haut, 1 = 
 	return 0;
 }
 
-void tabcpy(int * dest, int * src, int s) {
-	int i;
-	for (i = 0; i < s; i++) {
-		dest[i] = src[i];
-	}
-}
-
 /* Nombre de possibilités */
 int nb_remain (int * tab[10][2], int n, int * poss) {
 	int blank4[4];
@@ -260,7 +253,6 @@ int printAssistant(SDL_Surface *ecran) {
 	
 	int * poss = malloc(pow(8, 4) * sizeof(int));
 	int s_possible = 4096;
-	int conseil[4];
 
 	int *tab[10][2];
 	for (j = 0; j < 10; j++) {
@@ -379,14 +371,16 @@ int printAssistant(SDL_Surface *ecran) {
 		        	}
 		        }
 		        
-		        /* Conseil */
+		        /* 
+		        
+		        Conseil */
 		        if (!pass) {
 		        	if (is_over(x_m, y_m, *help, pos_eva[2])) {
-		        		assist(tab, n, poss, s_possible, conseil);
-						if (conseil[0] != -1) {
+		        		assist(tab, n, poss, s_possible, blank4);
+						if (blank4[0] != -1) {
 							for (i = 0; i < 4; i++) {
-				    			SDL_BlitSurface(pions[conseil[i]], NULL, ecran, &pos_chx[i]);
-				    			tab[n][0][i] = conseil[i];
+				    			SDL_BlitSurface(pions[blank4[i]], NULL, ecran, &pos_chx[i]);
+				    			tab[n][0][i] = blank4[i];
 				    		}
 				    	}
 		        	}
