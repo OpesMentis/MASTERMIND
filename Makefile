@@ -1,13 +1,13 @@
 all: Mastermind
 
-Mastermind: regles.o jeu.o assistant.o main.o
-	gcc -O3 -o Mastermind regles.o jeu.o assistant.o main.o -lSDL -lSDL_image
+Mastermind: stats.o jeu.o assistant.o main.o
+	gcc -O3 -o Mastermind stats.o jeu.o assistant.o main.o -lSDL -lSDL_image
 	
 main.o: main.c
 	gcc -O3 -Wall -Wfatal-errors -o main.o -c main.c
 	
-regles.o: regles.c regles.h
-	gcc -O3 -Wall -Wfatal-errors -o regles.o -c regles.c
+regles.o: stats.c stats.h
+	gcc -O3 -Wall -Wfatal-errors -o stats.o -c stats.c
 	
 jeu.o: jeu.c jeu.h
 	gcc -O3 -Wall -Wfatal-errors -o jeu.o -c jeu.c

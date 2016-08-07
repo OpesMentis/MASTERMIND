@@ -10,7 +10,7 @@
 #include <math.h>
 #include "jeu.h"
 #include "assistant.h"
-#include "regles.h"
+#include "stats.h"
 
 void eval_code (int code[4], int prop[4], int res[2]) {
 	res[0] = 0; res[1] = 0;
@@ -195,6 +195,7 @@ int printJeu (SDL_Surface *ecran) {
 	
 	int * poss = malloc(pow(8, 4) * sizeof(int));
 	int s_possible = 4096;
+	int au = 0; // aide utilisée
 
 	int *tab[10][2];
 	for (j = 0; j < 10; j++) {
@@ -303,6 +304,7 @@ int printJeu (SDL_Surface *ecran) {
             	/* Bouton 'abandon' */
             	if (!pass && !over) {
             		if (is_over(x_m, y_m, *jouer, pos_jou)) {
+            			inc_stats(1, 0, 0);
 		    			for (i = 0; i < 4; i++) {
 							pos_chx[i].x = 230 + 50 * i;
 							pos_chx[i].y = 17;
@@ -333,6 +335,7 @@ int printJeu (SDL_Surface *ecran) {
 		        /* Bouton 'conseil' */
 		        if (!pass && !over) {
 		        	if (is_over(x_m, y_m, *help, pos_opt[2])) {
+		        		au = 1;
 		        		assist(tab, n, poss, s_possible, tab[n][0]);
 		        		for (i = 0; i < 4; i++) {
 		        			SDL_BlitSurface(pions[tab[n][0][i]], NULL, ecran, &pos_chx[i]);
@@ -357,9 +360,11 @@ int printJeu (SDL_Surface *ecran) {
 								SDL_BlitSurface(pions[code[i]], NULL, ecran, &pos_chx[i]);
 							}
 							if (tab[n][1][0] == 4) {
+								inc_stats(1, 1, 1-au);
 								SDL_BlitSurface(good, NULL, ecran, &pos_smiley);
 							} else {
 								SDL_BlitSurface(bad, NULL, ecran, &pos_smiley);
+								inc_stats(1, 0, 0);
 							}
 							SDL_BlitSurface(jouer, NULL, ecran, &pos_jou);
 							over = 1;
