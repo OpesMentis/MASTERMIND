@@ -1,9 +1,14 @@
 # MASTERMIND
 
-Jeu de Mastermind écrit en C, avec son interface graphique conçue grâce à la bibliothèque SDL.
+Jeu de Mastermind pour Linux écrit en C, avec son interface graphique conçue grâce à la bibliothèque SDL.
 
 - Auteur : *Antoine Planchot*
-- Nouveauté : La section Assistant, appelée à s'étoffer, qui vous aide dans vos parties.
+
+Fonctionnalités :
+- Un jeu de Mastermind où vous affronterez l'ordinateur
+- Un conseiller virtuel pour vous débloquer
+- Un assistant pour mieux étudier le jeu en profondeur
+- Un récapitulatif de vos statistiques personnelles.
 
 Vous devez au préalable installer certaines bibliothèques. Entrez les commandes :
 ```

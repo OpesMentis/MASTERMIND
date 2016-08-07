@@ -6,7 +6,7 @@ Mastermind: stats.o jeu.o assistant.o main.o
 main.o: main.c
 	gcc -O3 -Wall -Wfatal-errors -o main.o -c main.c
 	
-regles.o: stats.c stats.h
+stats.o: stats.c stats.h
 	gcc -O3 -Wall -Wfatal-errors -o stats.o -c stats.c
 	
 jeu.o: jeu.c jeu.h

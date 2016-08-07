@@ -14,7 +14,7 @@
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
-#include "regles.h"
+#include "stats.h"
 #include "jeu.h"
 #include "credits.h"
 #include "assistant.h"
@@ -85,6 +85,8 @@ int main (int argc, char **argv) {
             		continuer = printJeu(ecran);
             	} else if (is_over(x_m, y_m, *m_assistant, pos2)) {
             		continuer = printAssistant(ecran);
+            	} else if (is_over(x_m, y_m, *m_stat, pos3)) {
+            		continuer = printStats(ecran);
             	}
             	break;
             
@@ -99,6 +101,7 @@ int main (int argc, char **argv) {
 		    	SDL_BlitSurface(logo, NULL, ecran, &posLogo);
 				SDL_BlitSurface(m_jouer, NULL, ecran, &pos1);
 				SDL_BlitSurface(m_assistant, NULL, ecran, &pos2);
+				SDL_BlitSurface(m_stat, NULL, ecran, &pos3);
 			} else if (continuer == 3) {
 				continuer = printJeu(ecran);
 			}

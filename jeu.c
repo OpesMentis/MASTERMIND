@@ -219,6 +219,8 @@ int printJeu (SDL_Surface *ecran) {
 	SDL_BlitSurface(sec_g, NULL, ecran, &pos_sec[0]);
 	SDL_BlitSurface(sec_d, NULL, ecran, &pos_sec[1]);
 	
+	inc_stats(1, 0, 0);
+	
 	SDL_Flip(ecran);
 	
 	while (continuer == 1) {
@@ -227,22 +229,6 @@ int printJeu (SDL_Surface *ecran) {
            	case SDL_QUIT:
                	continuer = 0;
                	break;
-            
-            case SDL_KEYDOWN:
-            	switch (event.key.keysym.sym) {
-            		case SDLK_m:
-            			continuer = 2;
-            			break;
-            		case SDLK_n:
-            			continuer = 3;
-            			break;
-            		case SDLK_r:
-            			continuer = 4;
-            			break;
-            		default:
-            			break;
-            	}
-            	break;
             	
             case SDL_MOUSEMOTION:
             	x_m = event.motion.x;
@@ -304,7 +290,6 @@ int printJeu (SDL_Surface *ecran) {
             	/* Bouton 'abandon' */
             	if (!pass && !over) {
             		if (is_over(x_m, y_m, *jouer, pos_jou)) {
-            			inc_stats(1, 0, 0);
 		    			for (i = 0; i < 4; i++) {
 							pos_chx[i].x = 230 + 50 * i;
 							pos_chx[i].y = 17;
@@ -360,11 +345,10 @@ int printJeu (SDL_Surface *ecran) {
 								SDL_BlitSurface(pions[code[i]], NULL, ecran, &pos_chx[i]);
 							}
 							if (tab[n][1][0] == 4) {
-								inc_stats(1, 1, 1-au);
+								inc_stats(0, 1, 1-au);
 								SDL_BlitSurface(good, NULL, ecran, &pos_smiley);
 							} else {
 								SDL_BlitSurface(bad, NULL, ecran, &pos_smiley);
-								inc_stats(1, 0, 0);
 							}
 							SDL_BlitSurface(jouer, NULL, ecran, &pos_jou);
 							over = 1;

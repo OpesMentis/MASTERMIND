@@ -7,11 +7,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "stats.h"
-/*
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
-*/
+#include "stats.h"
+#include "jeu.h"
+
 /* Renvoie 'a' le nombres de parties,
    'b' le nombre de victoires,
    'c' le nombre de victoires sans aide */
@@ -82,8 +82,17 @@ void reset_stats () {
 	fclose(f_stats);
 }
 
-/*
-int printStats(SDL_Surface *ecran) {
+void init_pos_s (SDL_Rect pos[3][5]) {
+	int i, j;
+	for (i = 0; i < 3; i++) {
+		for (j = 0; j < 5; j++) {
+			pos[i][j].x = 360 + j*20;
+			pos[i][j].y = 147 + i*63;
+		}
+	}
+}
+
+int printStats (SDL_Surface *ecran) {
 	SDL_Surface *jeu = IMG_Load("img/fond.png");
 	SDL_Surface *nb0 = IMG_Load("img/nb0.png");
 	SDL_Surface *nb1 = IMG_Load("img/nb1.png");
@@ -95,9 +104,86 @@ int printStats(SDL_Surface *ecran) {
 	SDL_Surface *nb7 = IMG_Load("img/nb7.png");
 	SDL_Surface *nb8 = IMG_Load("img/nb8.png");
 	SDL_Surface *nb9 = IMG_Load("img/nb9.png");
+	SDL_Surface *none = IMG_Load("img/none.png");
+	
+	SDL_Surface *stats = IMG_Load("img/stats.png");
 	SDL_Surface *menu = IMG_Load("img/menu2.png");
 	SDL_Surface *menus = IMG_Load("img/menu2s.png");
 	SDL_Surface *reset = IMG_Load("img/reset.png");
 	SDL_Surface *resets = IMG_Load("img/resets.png");
+	
+	SDL_Surface *nb[10] = { nb0, nb1, nb2, nb3, nb4,
+							nb5, nb6, nb7, nb8, nb9};
+	
+	SDL_Rect pos = {0, 0};
+	SDL_Rect pos_reset = {240, 440};
+	SDL_Rect pos_men = {440, 440};
+	SDL_Rect pos_stats = {100, 150};
+	SDL_Rect pos_s[3][5];
+	
+	SDL_BlitSurface(jeu, NULL, ecran, &pos);
+	SDL_BlitSurface(menu, NULL, ecran, &pos_men);
+	SDL_BlitSurface(reset, NULL, ecran, &pos_reset);
+	SDL_BlitSurface(stats, NULL, ecran, &pos_stats);
+	
+	int continuer = 1;
+	SDL_Event event;
+	int x_m, y_m;
+	int i, j;
+	char data[3][6];
+	
+	init_pos_s (pos_s);
+	
+	read_stats(data);
+	for (i = 0; i < 3; i++) {
+		for (j = 0; data[i][j] != '\0'; j++) {
+			SDL_BlitSurface(nb[data[i][j] - '0'], NULL, ecran, &pos_s[i][j]);
+		}
+	}
+	
+	SDL_Flip(ecran);
+	
+	while (continuer == 1) {
+    	SDL_WaitEvent(&event);
+        switch (event.type) {
+           	case SDL_QUIT:
+               	continuer = 0;
+               	break;
+            case SDL_MOUSEMOTION:
+            	x_m = event.motion.x;
+	           	y_m = event.motion.y;
+           	
+           		if (is_over(x_m, y_m, *menu, pos_men)) {
+           			SDL_BlitSurface(menus, NULL, ecran, &pos_men);
+           		} else if (is_over(x_m, y_m, *reset, pos_reset)) {
+           			SDL_BlitSurface(resets, NULL, ecran, &pos_reset);
+           		} else {
+           			SDL_BlitSurface(menu, NULL, ecran, &pos_men);
+           			SDL_BlitSurface(reset, NULL, ecran, &pos_reset);
+           		}
+           		break;
+           	case SDL_MOUSEBUTTONUP:
+            	x_m = event.button.x;
+	           	y_m = event.button.y;
+	           	
+            	if (is_over(x_m, y_m, *menu, pos_men)) {
+            		continuer = 2;
+            	} else if (is_over(x_m, y_m, *reset, pos_reset)) {
+            		reset_stats(data);
+					for (i = 0; i < 3; i++) {
+						for (j = 0; data[i][j] != '\0'; j++) {
+							SDL_BlitSurface(none, NULL, ecran, &pos_s[i][j]);
+						}
+						SDL_BlitSurface(nb[0], NULL, ecran, &pos_s[i][0]);
+					}
+            	}
+            	break;
+            default:
+            	break;
+    	}
+    	SDL_Flip(ecran);
+    }
+            	
+	return continuer;
 }
-*/
+
