@@ -30,8 +30,6 @@ int main (int argc, char **argv) {
 	SDL_Surface *logo = IMG_Load("img/logo.png");
 	SDL_Surface *m_jouer = IMG_Load("img/m_jouer.png");
 	SDL_Surface *m_jouers = IMG_Load("img/m_jouers.png");
-	SDL_Surface *m_aide = IMG_Load("img/m_aide.png");
-	SDL_Surface *m_aides = IMG_Load("img/m_aides.png");	
 	SDL_Surface *m_assistant = IMG_Load("img/m_assistant.png");
 	SDL_Surface *m_assistants = IMG_Load("img/m_assistants.png");
 	
@@ -39,13 +37,11 @@ int main (int argc, char **argv) {
 	SDL_Rect posLogo = {160, 20};
 	SDL_Rect pos1 = {170, 150};
 	SDL_Rect pos2 = {170, 250};
-	SDL_Rect pos3 = {170, 350};
 	
 	SDL_BlitSurface(fond, NULL, ecran, &posFond);
 	SDL_BlitSurface(logo, NULL, ecran, &posLogo);
 	SDL_BlitSurface(m_jouer, NULL, ecran, &pos1);
-	SDL_BlitSurface(m_aide, NULL, ecran, &pos2);
-	SDL_BlitSurface(m_assistant, NULL, ecran, &pos3);
+	SDL_BlitSurface(m_assistant, NULL, ecran, &pos2);
 	
 	SDL_Flip(ecran);
 	
@@ -66,14 +62,11 @@ int main (int argc, char **argv) {
             	
             	if (is_over(x_m, y_m, *m_jouer, pos1)) {
             		SDL_BlitSurface(m_jouers, NULL, ecran, &pos1);
-            	} else if (is_over(x_m, y_m, *m_aide, pos2)) {
-            		SDL_BlitSurface(m_aides, NULL, ecran, &pos2);
-            	} else if (is_over(x_m, y_m, *m_assistant, pos3)) {
-            		SDL_BlitSurface(m_assistants, NULL, ecran, &pos3);
+            	} else if (is_over(x_m, y_m, *m_assistant, pos2)) {
+            		SDL_BlitSurface(m_assistants, NULL, ecran, &pos2);
             	} else {
             		SDL_BlitSurface(m_jouer, NULL, ecran, &pos1);
-            		SDL_BlitSurface(m_aide, NULL, ecran, &pos2);
-            		SDL_BlitSurface(m_assistant, NULL, ecran, &pos3);
+            		SDL_BlitSurface(m_assistant, NULL, ecran, &pos2);
             	}
             	break;
             	
@@ -83,9 +76,7 @@ int main (int argc, char **argv) {
             	
             	if (is_over(x_m, y_m, *m_jouer, pos1)) {
             		continuer = printJeu(ecran);
-            	} else if (is_over(x_m, y_m, *m_aide, pos2)) {
-            		continuer = printRegles(ecran);
-            	} else if (is_over(x_m, y_m, *m_aide, pos3)) {
+            	} else if (is_over(x_m, y_m, *m_assistant, pos2)) {
             		continuer = printAssistant(ecran);
             	}
             	break;
@@ -100,28 +91,14 @@ int main (int argc, char **argv) {
 		    	SDL_BlitSurface(fond, NULL, ecran, &posFond);
 		    	SDL_BlitSurface(logo, NULL, ecran, &posLogo);
 				SDL_BlitSurface(m_jouer, NULL, ecran, &pos1);
-				SDL_BlitSurface(m_aide, NULL, ecran, &pos2);
-				SDL_BlitSurface(m_assistant, NULL, ecran, &pos3);
+				SDL_BlitSurface(m_assistant, NULL, ecran, &pos2);
 			} else if (continuer == 3) {
 				continuer = printJeu(ecran);
-			} else if (continuer == 4) {
-				continuer = printRegles(ecran);
 			}
 		}
 		
         SDL_Flip(ecran);
     }
-    
-    SDL_FreeSurface(fond);
-    SDL_FreeSurface(ecran);
-    
-	SDL_FreeSurface(m_jouer);
-	SDL_FreeSurface(m_jouers);
-	SDL_FreeSurface(m_aide);
-	SDL_FreeSurface(m_aides);	
-	SDL_FreeSurface(m_assistant);
-	SDL_FreeSurface(m_assistants);
-    
     SDL_Quit();
  
     return EXIT_SUCCESS;

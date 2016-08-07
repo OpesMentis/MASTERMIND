@@ -550,41 +550,6 @@ int printAssistant(SDL_Surface *ecran) {
        	}
        	SDL_Flip(ecran);
     }
-    
-	SDL_FreeSurface(jeu);
-	
-	SDL_FreeSurface(vert);
-	SDL_FreeSurface(violet);
-	SDL_FreeSurface(rouge);
-	SDL_FreeSurface(orange);
-	SDL_FreeSurface(noir);
-	SDL_FreeSurface(jaune);
-	SDL_FreeSurface(bleu);
-	SDL_FreeSurface(blanc);
-	
-	SDL_FreeSurface(p_rouge0);
-	SDL_FreeSurface(p_rouge1);
-	SDL_FreeSurface(p_rouge2);
-	SDL_FreeSurface(p_rouge3);
-	SDL_FreeSurface(p_rouge4);
-	SDL_FreeSurface(p_blanc0);
-	SDL_FreeSurface(p_blanc1);
-	SDL_FreeSurface(p_blanc2);
-	SDL_FreeSurface(p_blanc3);
-	SDL_FreeSurface(p_blanc4);
-	SDL_FreeSurface(p_gauche);
-	SDL_FreeSurface(p_droite);
-	SDL_FreeSurface(p_none);
-	
-	SDL_FreeSurface(vide);
-	SDL_FreeSurface(none);
-	SDL_FreeSurface(haut);
-	SDL_FreeSurface(bas);
-	SDL_FreeSurface(hauts);
-	SDL_FreeSurface(bass);
-	
-	SDL_FreeSurface(menu);
-	SDL_FreeSurface(menus);
 	
 	return continuer;
 }
